@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>local.lume.app</string>
+    <key>CFBundleName</key>
+    <string>Lume</string>
+    <key>CFBundleDisplayName</key>
+    <string>Lume</string>
+    <key>CFBundleExecutable</key>
+    <string>Lume</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>O Lume ouve o microfone para reconhecer “Ei, Lume” e os seus comandos. O áudio é processado no próprio Mac.</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>O Lume lê o Calendário do Mac para mostrar seus próximos eventos no notch.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>O Lume lê o Calendário do Mac para mostrar seus próximos eventos no notch.</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>O Lume pergunta ao Spotify qual música está tocando para mostrar no notch.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>O Lume transcreve o que você fala, no próprio Mac, para entender os comandos.</string>
+</dict>
+</plist>
