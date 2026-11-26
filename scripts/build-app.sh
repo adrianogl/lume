@@ -11,7 +11,13 @@ mkdir -p "$APP/Contents/MacOS"
 cp .build/release/Lume "$APP/Contents/MacOS/Lume"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 mkdir -p "$APP/Contents/Resources"
-cp Resources/*.py "$APP/Contents/Resources/"
+xcrun actool Resources/AppIcon.icon \
+  --compile "$APP/Contents/Resources" \
+  --app-icon AppIcon \
+  --platform macosx \
+  --minimum-deployment-target 14.0 \
+  --output-partial-info-plist "$(mktemp)" \
+  > /dev/null
 codesign --force --sign - "$APP"
 
 echo "$APP"
