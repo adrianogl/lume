@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 enum Metrics {
@@ -276,4 +277,73 @@ enum OwlEyes {
 enum LaunchOptions {
     static let demoAlert = "LUME_DEMO_ALERT"
     static let demoMeeting = "LUME_DEMO_MEETING"
+}
+
+enum ClosedLayout {
+    static let edgePadding: CGFloat = 12
+    static let iconGap: CGFloat = 7
+    static let iconSlot: CGFloat = 20
+    static let twoIconsExtra: CGFloat = 14
+    static let eyeGlowRadius: CGFloat = 1.5
+    static let amberEye = NSColor(red: 1, green: 214 / 255, blue: 168 / 255, alpha: 1)
+    static let amberGlow = NSColor(red: 1, green: 150 / 255, blue: 70 / 255, alpha: 1)
+    static let amberGlowOpacity: Double = 0.9
+}
+
+enum ClaudeLayout {
+    static let markColor = Color(red: 217 / 255, green: 119 / 255, blue: 87 / 255)
+    static let markSize: CGFloat = 12
+    static let tagSize: CGFloat = 9
+}
+
+enum ClaudeText {
+    static let permissionTitle = "Claude precisa de você"
+    static let waitingTitle = "Claude está esperando"
+    static let finishedTitle = "Claude terminou"
+    static let permissionTag = "permissão"
+    static let waitingTag = "resposta"
+    static let finishedTag = "pronto"
+    static let open = "Abrir"
+    static let later = "Depois"
+    static let defaultAccount = "Pessoal"
+    static let pendingLabel = "Claude Code esperando você"
+    static let permissionPrefix = "Claude needs your permission to use "
+    static let waitingMessage = "Claude is waiting for your input"
+    static let usesTool = "Quer usar o "
+    static let waitingForYou = "Esperando sua resposta"
+
+    static func translate(_ message: String) -> String {
+        if message.hasPrefix(permissionPrefix) {
+            return usesTool + message.dropFirst(permissionPrefix.count)
+        }
+        if message.hasPrefix(waitingMessage) {
+            return waitingForYou
+        }
+        return message
+    }
+}
+
+enum ClaudeHook {
+    static let command = "claude-hook"
+    static let accountFlag = "--account"
+    static let directoryPrefix = ".claude"
+    static let settingsFile = "settings.json"
+    static let projectsFolder = "projects"
+    static let executableMarker = "Lume"
+    static let backupExtension = "lume-backup"
+    static let notification = Notification.Name("local.lume.claude-hook")
+    static let events = ["Notification", "Stop", "UserPromptSubmit", "PostToolUse", "SessionEnd"]
+    static let messageLimit = 160
+    static let transcriptTail: UInt64 = 65_536
+    static let cleanupInterval: TimeInterval = 300
+    static let staleAfter: TimeInterval = 7_200
+
+    enum Key {
+        static let kind = "kind"
+        static let session = "session"
+        static let cwd = "cwd"
+        static let message = "message"
+        static let account = "account"
+        static let bundle = "bundle"
+    }
 }

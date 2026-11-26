@@ -15,6 +15,7 @@ struct ModulesConfig: Codable, Equatable {
     var clock = ClockModuleConfig()
     var week = WeekModuleConfig()
     var music = MusicModuleConfig()
+    var claudeCode = ClaudeCodeModuleConfig()
 
     init() {}
 
@@ -23,6 +24,7 @@ struct ModulesConfig: Codable, Equatable {
         clock = try container.decodeIfPresent(ClockModuleConfig.self, forKey: .clock) ?? ClockModuleConfig()
         week = try container.decodeIfPresent(WeekModuleConfig.self, forKey: .week) ?? WeekModuleConfig()
         music = try container.decodeIfPresent(MusicModuleConfig.self, forKey: .music) ?? MusicModuleConfig()
+        claudeCode = try container.decodeIfPresent(ClaudeCodeModuleConfig.self, forKey: .claudeCode) ?? ClaudeCodeModuleConfig()
     }
 }
 
@@ -138,5 +140,24 @@ struct MusicModuleConfig: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
         showWhilePlaying = try container.decodeIfPresent(Bool.self, forKey: .showWhilePlaying) ?? true
+    }
+}
+
+struct ClaudeCodeModuleConfig: Codable, Equatable {
+    var enabled = true
+    var permission = true
+    var waiting = true
+    var finished = true
+    var accountNames: [String: String] = [:]
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        permission = try container.decodeIfPresent(Bool.self, forKey: .permission) ?? true
+        waiting = try container.decodeIfPresent(Bool.self, forKey: .waiting) ?? true
+        finished = try container.decodeIfPresent(Bool.self, forKey: .finished) ?? true
+        accountNames = try container.decodeIfPresent([String: String].self, forKey: .accountNames) ?? [:]
     }
 }

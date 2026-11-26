@@ -7,16 +7,17 @@ final class NotchModel: ObservableObject {
     @Published private(set) var isOpen = false
     @Published private(set) var pages: [NotchPage] = []
     @Published private(set) var pageIndex = 0
-    @Published private(set) var alert: EventAlert?
+    @Published private(set) var alert: NotchAlert?
     @Published private(set) var meeting: MeetingStatus?
     @Published private(set) var isMusicActive = false
+    @Published private(set) var isClaudeWaiting = false
     var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
     var openSettings: () -> Void = {}
     private var hoverTask: Task<Void, Never>?
     private var alertTask: Task<Void, Never>?
-    private var alertQueue: [EventAlert] = []
+    private var alertQueue: [NotchAlert] = []
     private var isHovering = false
 
     init(restingSize: CGSize, contentTopInset: CGFloat) {
@@ -64,19 +65,29 @@ final class NotchModel: ObservableObject {
     }
 
     var baseSize: CGSize {
-        guard let meeting else {
-            if isMusicActive, contentTopInset > 0 {
-                return CGSize(width: restingSize.width + MusicLayout.notchEarExtra * 2, height: restingSize.height)
+        let icons = (isMusicActive ? 1 : 0) + (isClaudeWaiting ? 1 : 0)
+        let iconExtra = CGFloat(icons) * ClosedLayout.iconSlot
+        if contentTopInset > 0 {
+            var extra = iconExtra
+            if let meeting {
+                extra += meeting.next == nil ? MeetingLayout.notchEarExtra : MeetingLayout.notchEndingEarExtra
             }
-            return restingSize
-        }
-        let physical = contentTopInset > 0
-        if physical {
-            let extra = meeting.next == nil ? MeetingLayout.notchEarExtra : MeetingLayout.notchEndingEarExtra
             return CGSize(width: restingSize.width + extra * 2, height: restingSize.height)
         }
-        let width = meeting.next == nil ? MeetingLayout.compactWidth : MeetingLayout.endingWidth
-        return CGSize(width: max(width, restingSize.width), height: restingSize.height)
+        if let meeting {
+            let width = (meeting.next == nil ? MeetingLayout.compactWidth : MeetingLayout.endingWidth) + iconExtra
+            return CGSize(width: max(width, restingSize.width), height: restingSize.height)
+        }
+        let extra = icons > 1 ? ClosedLayout.twoIconsExtra : 0
+        return CGSize(width: restingSize.width + extra, height: restingSize.height)
+    }
+
+    func setClaudeWaiting(_ waiting: Bool) {
+        guard waiting != isClaudeWaiting else { return }
+        withAnimation(NotchMotion.resize) { isClaudeWaiting = waiting }
+        if !isOpen, alert == nil {
+            rest()
+        }
     }
 
     func setMusicActive(_ active: Bool) {
@@ -120,7 +131,7 @@ final class NotchModel: ObservableObject {
         }
     }
 
-    func present(_ newAlert: EventAlert) {
+    func present(_ newAlert: NotchAlert) {
         alertQueue.append(newAlert)
         showNextAlert()
     }

@@ -11,7 +11,6 @@ struct NotchView: View {
 
     private var eyeSize: CGSize { OwlEyes.size(forNotchHeight: model.restingSize.height) }
 
-
     var body: some View {
         let flare = NotchCurve.flare(forHeight: model.size.height)
         let radius = NotchCurve.cornerRadius(forHeight: model.size.height)
@@ -41,20 +40,15 @@ struct NotchView: View {
                         .padding(.top, model.contentTopInset)
                         .frame(width: model.size.width, height: model.size.height)
                         .transition(.opacity.animation(OpenLayout.contentFade))
-                } else if let meeting = model.meeting {
-                    MeetingStripView(meeting: meeting, isBlinking: isBlinking)
-                        .frame(width: model.size.width, height: model.restingSize.height)
-                        .transition(.opacity)
-                } else if model.isMusicActive {
-                    MusicEarsView(eyeCenterOffset: eyeCenterOffset, eyeSize: eyeSize)
-                        .frame(width: model.size.width, height: model.restingSize.height)
-                        .transition(.opacity)
                 } else {
-                    HStack(spacing: eyeCenterOffset * 2 - eyeSize.width) {
-                        OwlEye(size: eyeSize, isBlinking: isBlinking)
-                        OwlEye(size: eyeSize, isBlinking: isBlinking)
-                    }
-                    .position(x: model.size.width / 2, y: model.restingSize.height / 2)
+                    ClosedStatusView(
+                        meeting: model.meeting,
+                        isMusicPlaying: model.isMusicActive,
+                        isClaudeWaiting: model.isClaudeWaiting,
+                        eyeSize: eyeSize,
+                        eyeCenterOffset: eyeCenterOffset
+                    )
+                    .frame(width: model.size.width, height: model.restingSize.height)
                     .transition(.opacity)
                 }
             }

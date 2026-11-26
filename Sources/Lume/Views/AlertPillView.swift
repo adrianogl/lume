@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 struct AlertPillView: View {
-    let alert: EventAlert
+    let alert: NotchAlert
     let isBlinking: Bool
     let dismiss: () -> Void
     let onContentHeight: (CGFloat) -> Void
@@ -13,21 +13,33 @@ struct AlertPillView: View {
                 OwlMascot(width: AlertLayout.mascotWidth, isBlinking: isBlinking)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(alert.event.title)
-                        .font(.system(size: AlertLayout.titleSize, weight: .bold))
-                        .fixedSize(horizontal: false, vertical: true)
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(title)
+                            .font(.system(size: AlertLayout.titleSize, weight: .bold))
+                            .fixedSize(horizontal: false, vertical: true)
+                        if case .claude(let claude) = alert {
+                            Text(claude.tag)
+                                .font(.system(size: ClaudeLayout.tagSize, weight: .bold))
+                                .textCase(.uppercase)
+                                .foregroundStyle(claude.tagColor)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1.5)
+                                .background(RoundedRectangle(cornerRadius: 4).fill(claude.tagColor.opacity(0.16)))
+                        }
+                    }
                     Text(subtitle(now: timeline.date))
                         .font(.system(size: AlertLayout.subtitleSize))
                         .opacity(WeekLayout.secondaryOpacity)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
                 Spacer(minLength: 0)
 
-                PillButton(title: alert.isStart ? AlertText.close : AlertText.later, isPrimary: false, action: dismiss)
-                if let url = alert.event.joinURL {
-                    PillButton(title: AlertText.join, isPrimary: true) {
-                        NSWorkspace.shared.open(url)
+                PillButton(title: secondaryTitle, isPrimary: false, action: dismiss)
+                if let primary {
+                    PillButton(title: primary.title, isPrimary: true) {
+                        primary.action()
                         dismiss()
                     }
                 }
@@ -43,21 +55,51 @@ struct AlertPillView: View {
         .onPreferenceChange(AlertContentHeightKey.self, perform: onContentHeight)
     }
 
+    private var title: String {
+        switch alert {
+        case .event(let event): event.event.title
+        case .claude(let claude): claude.title
+        }
+    }
+
+    private var secondaryTitle: String {
+        switch alert {
+        case .event(let event): event.isStart ? AlertText.close : AlertText.later
+        case .claude: ClaudeText.later
+        }
+    }
+
+    private var primary: (title: String, action: () -> Void)? {
+        switch alert {
+        case .event(let event):
+            guard let url = event.event.joinURL else { return nil }
+            return (AlertText.join, { NSWorkspace.shared.open(url) })
+        case .claude(let claude):
+            guard let bundle = claude.bundleID, !bundle.isEmpty else { return nil }
+            return (ClaudeText.open, { ClaudeCodeMonitor.open(bundleID: bundle) })
+        }
+    }
+
     private func subtitle(now: Date) -> String {
-        let calendar = Calendar.current
-        var parts: [String]
-        if alert.isStart || alert.event.start <= now {
-            parts = [AlertText.startedNow]
-        } else {
-            parts = [
-                WeekText.relative(from: now, to: alert.event.start, calendar: calendar),
-                WeekText.time(alert.event.start, calendar: calendar)
-            ]
+        switch alert {
+        case .claude(let claude):
+            return claude.subtitle
+        case .event(let event):
+            let calendar = Calendar.current
+            var parts: [String]
+            if event.isStart || event.event.start <= now {
+                parts = [AlertText.startedNow]
+            } else {
+                parts = [
+                    WeekText.relative(from: now, to: event.event.start, calendar: calendar),
+                    WeekText.time(event.event.start, calendar: calendar)
+                ]
+            }
+            if let provider = event.event.joinURL.flatMap(MeetingLink.provider(of:)) {
+                parts.append(provider)
+            }
+            return parts.joined(separator: " · ")
         }
-        if let provider = alert.event.joinURL.flatMap(MeetingLink.provider(of:)) {
-            parts.append(provider)
-        }
-        return parts.joined(separator: " · ")
     }
 }
 

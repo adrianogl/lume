@@ -14,8 +14,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let music = MusicController()
     private var musicSubscription: AnyCancellable?
     private lazy var alerts = EventAlertScheduler(store: week) { [weak self] alert in
-        self?.model?.present(alert)
+        self?.model?.present(.event(alert))
     }
+    private lazy var claude = ClaudeCodeMonitor { [weak self] alert in
+        self?.model?.present(.claude(alert))
+    }
+    private var claudeSubscription: AnyCancellable?
     private lazy var meetings = MeetingTracker(store: week) { [weak self] status in
         guard ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] == nil else { return }
         self?.model?.setMeeting(status)
@@ -29,6 +33,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showNotch()
         configSubscription = config.$config.sink { [weak self] newConfig in
             self?.apply(newConfig)
+        }
+        claudeSubscription = claude.$pendingCount.sink { [weak self] count in
+            self?.model?.setClaudeWaiting(count > 0)
         }
         musicSubscription = music.$isActive.sink { [weak self] active in
             self?.model?.setMusicActive(active)
@@ -50,6 +57,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alerts.apply(newConfig.modules.week)
         meetings.apply(newConfig.modules.week)
         music.apply(newConfig.modules.music)
+        claude.apply(newConfig.modules.claudeCode)
         model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
@@ -90,6 +98,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.model = model
         meetings.update()
         model.setMusicActive(music.isActive)
+        model.setClaudeWaiting(claude.pendingCount > 0)
 
         let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
         hover.start()
@@ -100,7 +109,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.swipe = swipe
 
         if ProcessInfo.processInfo.environment[LaunchOptions.demoAlert] != nil {
-            model.present(DemoAlert.make())
+            model.present(.event(DemoAlert.make()))
         }
         if let demo = ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] {
             model.setMeeting(DemoMeeting.make(ending: demo == "ending"))

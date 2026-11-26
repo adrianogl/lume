@@ -4,24 +4,25 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var config: ConfigStore
     @ObservedObject var week: WeekEventStore
-    @State private var selection: NotchPage = .week
+    @State private var selection: SettingsSection = .week
     @State private var icalText = ""
     @State private var chosenSourceKind: SourceKind?
 
     var body: some View {
         NavigationSplitView {
-            List(NotchPage.allCases, id: \.self, selection: $selection) { page in
+            List(SettingsSection.allCases, selection: $selection) { section in
                 Label {
                     HStack {
-                        Text(page.title)
+                        Text(section.title)
                         Spacer()
                         Circle()
-                            .fill(isEnabled(page) ? Color.green : Color.secondary.opacity(0.4))
+                            .fill(section.isEnabled(in: config.config) ? Color.green : Color.secondary.opacity(0.4))
                             .frame(width: 7, height: 7)
                     }
                 } icon: {
-                    Image(systemName: page.symbol)
+                    Image(systemName: section.symbol)
                 }
+                .tag(section)
             }
             .navigationSplitViewColumnWidth(SettingsLayout.sidebarWidth)
         } detail: {
@@ -30,6 +31,7 @@ struct SettingsView: View {
                 case .clock: clockSettings
                 case .week: weekSettings
                 case .music: musicSettings
+                case .claudeCode: ClaudeCodeSettingsView(config: config)
                 }
                 if let error = config.loadError {
                     Section {
@@ -155,9 +157,6 @@ struct SettingsView: View {
         .disabled(!config.config.modules.week.enabled)
     }
 
-    private func isEnabled(_ page: NotchPage) -> Bool {
-        NotchPage.enabled(in: config.config).contains(page)
-    }
 
     private func binding<Value>(_ keyPath: WritableKeyPath<LumeConfig, Value>) -> Binding<Value> {
         Binding(
