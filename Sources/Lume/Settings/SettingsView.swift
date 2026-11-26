@@ -117,6 +117,21 @@ struct SettingsView: View {
                 Text(SettingsText.alertsFooter).frame(maxWidth: .infinity, alignment: .leading)
             }
 
+            Section {
+                Toggle(SettingsText.duringEventEnabled, isOn: binding(\.modules.week.duringEvent.enabled))
+                Picker(SettingsText.endingLabel, selection: binding(\.modules.week.duringEvent.endingMinutes)) {
+                    Text(SettingsText.endingOff).tag(0)
+                    ForEach([5, 10], id: \.self) { minutes in
+                        Text(SettingsText.minutesBefore(minutes)).tag(minutes)
+                    }
+                }
+                .disabled(!config.config.modules.week.duringEvent.enabled)
+            } header: {
+                Text(SettingsText.duringEventSection)
+            } footer: {
+                Text(SettingsText.duringEventFooter).frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             Section(SettingsText.displaySection) {
                 Picker(SettingsText.weekStartLabel, selection: binding(\.modules.week.weekStartsOn)) {
                     Text(SettingsText.monday).tag(WeekStart.monday)

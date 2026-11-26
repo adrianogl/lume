@@ -10,6 +10,13 @@ struct CalendarEvent: Identifiable, Equatable {
     var joinURL: URL? = nil
 }
 
+struct MeetingStatus: Equatable {
+    let event: CalendarEvent
+    let remainingMinutes: Int
+    let isEnding: Bool
+    let next: CalendarEvent?
+}
+
 struct EventAlert: Identifiable, Equatable {
     let event: CalendarEvent
     let leadMinutes: Int

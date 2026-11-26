@@ -14,7 +14,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var alerts = EventAlertScheduler(store: week) { [weak self] alert in
         self?.model?.present(alert)
     }
+    private lazy var meetings = MeetingTracker(store: week) { [weak self] status in
+        guard ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] == nil else { return }
+        self?.model?.setMeeting(status)
+    }
     private var configSubscription: AnyCancellable?
+    private var eventsSubscription: AnyCancellable?
     private lazy var settings = SettingsWindowController(config: config, week: week)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -22,6 +27,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         showNotch()
         configSubscription = config.$config.sink { [weak self] newConfig in
             self?.apply(newConfig)
+        }
+        eventsSubscription = week.$events.dropFirst().sink { [weak self] _ in
+            DispatchQueue.main.async { self?.meetings.update() }
         }
         screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
@@ -35,6 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func apply(_ newConfig: LumeConfig) {
         week.apply(newConfig.modules.week)
         alerts.apply(newConfig.modules.week)
+        meetings.apply(newConfig.modules.week)
         model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
@@ -72,6 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.orderFrontRegardless()
         self.panel = panel
         self.model = model
+        meetings.update()
 
         let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
         hover.start()
@@ -83,6 +93,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         if ProcessInfo.processInfo.environment[LaunchOptions.demoAlert] != nil {
             model.present(DemoAlert.make())
+        }
+        if let demo = ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] {
+            model.setMeeting(DemoMeeting.make(ending: demo == "ending"))
         }
     }
 

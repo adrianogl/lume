@@ -101,6 +101,38 @@ enum AlertLayout {
     static let selectableMinutes = [1, 5, 10, 15, 30]
 }
 
+enum MeetingLayout {
+    static let refreshInterval: TimeInterval = 15
+    static let nextWindow: TimeInterval = 30 * 60
+    static let live = Color(red: 48 / 255, green: 199 / 255, blue: 89 / 255)
+    static let eyeSize = CGSize(width: 7, height: 11)
+    static let eyeGap: CGFloat = 4
+    static let dotSize: CGFloat = 6
+    static let fontSize: CGFloat = 11.5
+    static let spacing: CGFloat = 7
+    static let horizontalPadding: CGFloat = 12
+    static let compactWidth: CGFloat = 150
+    static let endingWidth: CGFloat = 330
+    static let notchEarExtra: CGFloat = 70
+    static let notchEndingEarExtra: CGFloat = 150
+}
+
+enum MeetingText {
+    static let now = "agora"
+
+    static func remaining(_ minutes: Int) -> String {
+        "\(minutes) min"
+    }
+
+    static func next(_ event: CalendarEvent) -> String {
+        "próximo: \(event.title) às \(WeekText.time(event.start, calendar: .current))"
+    }
+
+    static func accessibility(_ meeting: MeetingStatus) -> String {
+        "\(meeting.event.title), faltam \(meeting.remainingMinutes) min"
+    }
+}
+
 enum AlertSound {
     static let defaultName = "Glass"
     static let choices = ["Glass", "Ping", "Pop", "Purr", "Tink", "Hero"]
@@ -202,4 +234,5 @@ enum OwlEyes {
 
 enum LaunchOptions {
     static let demoAlert = "LUME_DEMO_ALERT"
+    static let demoMeeting = "LUME_DEMO_MEETING"
 }

@@ -89,7 +89,7 @@ struct WeekPageView: View {
                         ScrollView(.vertical, showsIndicators: false) {
                             VStack(alignment: .leading, spacing: WeekLayout.rowSpacing) {
                                 ForEach(dayEvents) { event in
-                                    EventRow(event: event, isPast: isToday && event.end <= now, calendar: store.calendar)
+                                    EventRow(event: event, isPast: isToday && event.end <= now, isNow: !event.isAllDay && event.start <= now && event.end > now, calendar: store.calendar)
                                 }
                             }
                         }
@@ -164,15 +164,17 @@ private struct DayCell: View {
 private struct EventRow: View {
     let event: CalendarEvent
     let isPast: Bool
+    let isNow: Bool
     let calendar: Calendar
 
     var body: some View {
         HStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 1.5).fill(event.color).frame(width: 3, height: 12)
-            Text(event.isAllDay ? WeekText.allDay : WeekText.time(event.start, calendar: calendar))
+            Text(isNow ? MeetingText.now : (event.isAllDay ? WeekText.allDay : WeekText.time(event.start, calendar: calendar)))
                 .font(.system(size: WeekLayout.rowSize, weight: .semibold))
                 .monospacedDigit()
-                .opacity(WeekLayout.secondaryOpacity)
+                .foregroundStyle(isNow ? MeetingLayout.live : .white)
+                .opacity(isNow ? 1 : WeekLayout.secondaryOpacity)
             Text(event.title)
                 .font(.system(size: WeekLayout.rowSize))
                 .lineLimit(1)

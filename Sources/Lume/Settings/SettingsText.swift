@@ -23,6 +23,11 @@ enum SettingsText {
     static let alertSound = "Som"
     static let noSound = "Sem som"
     static let alertsFooter = "O notch mostra uma pílula com o evento. Eventos de dia todo não avisam."
+    static let duringEventSection = "Durante o evento"
+    static let duringEventEnabled = "Mostrar no notch fechado"
+    static let endingLabel = "Destacar o fim"
+    static let endingOff = "Não"
+    static let duringEventFooter = "Com o notch fechado, mostra quanto falta para o evento acabar. Perto do fim, fica âmbar e mostra o próximo compromisso."
     static let displaySection = "Exibição"
 
     static func minutesBefore(_ minutes: Int) -> String {

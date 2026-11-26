@@ -14,3 +14,26 @@ enum DemoAlert {
         return EventAlert(event: event, leadMinutes: 5)
     }
 }
+
+enum DemoMeeting {
+    static func make(ending: Bool) -> MeetingStatus {
+        let now = Date()
+        let event = CalendarEvent(
+            id: "demo-meeting",
+            title: "Daily MEF",
+            start: now.addingTimeInterval(-10 * 60),
+            end: now.addingTimeInterval(ending ? 4 * 60 : 12 * 60),
+            isAllDay: false,
+            color: NotchRim.coral
+        )
+        let next = CalendarEvent(
+            id: "demo-next",
+            title: "1:1 com o tech lead",
+            start: now.addingTimeInterval(5 * 60),
+            end: now.addingTimeInterval(35 * 60),
+            isAllDay: false,
+            color: NotchRim.coral
+        )
+        return MeetingStatus(event: event, remainingMinutes: ending ? 4 : 12, isEnding: ending, next: ending ? next : nil)
+    }
+}

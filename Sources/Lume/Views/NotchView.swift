@@ -40,6 +40,10 @@ struct NotchView: View {
                         .padding(.top, model.contentTopInset)
                         .frame(width: model.size.width, height: model.size.height)
                         .transition(.opacity.animation(OpenLayout.contentFade))
+                } else if let meeting = model.meeting {
+                    MeetingStripView(meeting: meeting, isBlinking: isBlinking)
+                        .frame(width: model.size.width, height: model.restingSize.height)
+                        .transition(.opacity)
                 } else {
                     HStack(spacing: eyeCenterOffset * 2 - eyeSize.width) {
                         OwlEye(size: eyeSize, isBlinking: isBlinking)

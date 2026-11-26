@@ -8,6 +8,7 @@ final class NotchModel: ObservableObject {
     @Published private(set) var pages: [NotchPage] = []
     @Published private(set) var pageIndex = 0
     @Published private(set) var alert: EventAlert?
+    @Published private(set) var meeting: MeetingStatus?
     var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
@@ -31,8 +32,6 @@ final class NotchModel: ObservableObject {
     var currentPage: NotchPage? {
         pages.indices.contains(pageIndex) ? pages[pageIndex] : nil
     }
-
-    var isResting: Bool { size == restingSize }
 
     func setPages(_ newPages: [NotchPage]) {
         let current = currentPage
@@ -59,7 +58,26 @@ final class NotchModel: ObservableObject {
     }
 
     func rest() {
-        resize(toFit: restingSize)
+        resize(toFit: baseSize)
+    }
+
+    var baseSize: CGSize {
+        guard let meeting else { return restingSize }
+        let physical = contentTopInset > 0
+        if physical {
+            let extra = meeting.next == nil ? MeetingLayout.notchEarExtra : MeetingLayout.notchEndingEarExtra
+            return CGSize(width: restingSize.width + extra * 2, height: restingSize.height)
+        }
+        let width = meeting.next == nil ? MeetingLayout.compactWidth : MeetingLayout.endingWidth
+        return CGSize(width: max(width, restingSize.width), height: restingSize.height)
+    }
+
+    func setMeeting(_ status: MeetingStatus?) {
+        guard status != meeting else { return }
+        withAnimation(NotchMotion.resize) { meeting = status }
+        if !isOpen, alert == nil {
+            rest()
+        }
     }
 
     func hoverChanged(_ inside: Bool) {
