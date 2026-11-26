@@ -27,6 +27,49 @@ enum NotchCurve {
 
 enum NotchMotion {
     static let resize = Animation.spring(response: 0.5, dampingFraction: 0.72)
+    static let close = Animation.spring(response: 0.4, dampingFraction: 0.9)
+}
+
+enum NotchHover {
+    static let openSize = CGSize(width: 420, height: 140)
+    static let openDelay: Double = 0.12
+    static let closeDelay: Double = 0.35
+    static let restingSlop: CGFloat = 6
+}
+
+enum OwlShape {
+    static let heightRatio: CGFloat = 96.0 / 112.0
+    static let innerScale = CGSize(width: 0.955, height: 0.905)
+    static let eyeCenters = [CGPoint(x: 0.366, y: 0.49), CGPoint(x: 0.634, y: 0.49)]
+    static let eyeSize = CGSize(width: 0.125, height: 0.229)
+    static let rimFadeStart: CGFloat = 0.35
+    static let rimFadeEnd: CGFloat = 0.9
+    static let rimColors = [NotchRim.amber, NotchRim.coral, NotchRim.magenta]
+    static let bodyColors = [
+        Color(red: 58 / 255, green: 59 / 255, blue: 70 / 255),
+        Color(red: 30 / 255, green: 31 / 255, blue: 38 / 255),
+        Color(red: 18 / 255, green: 18 / 255, blue: 23 / 255)
+    ]
+}
+
+enum OpenLayout {
+    static let mascotWidth: CGFloat = 48
+    static let mascotOrigin = CGPoint(x: 18, y: 8)
+    static let mascotAppearScale: CGFloat = 0.6
+    static let headerTop: CGFloat = 13
+    static let titleLeading: CGFloat = 76
+    static let dateTrailing: CGFloat = 22
+    static let headerFontSize: CGFloat = 13
+    static let clockTop: CGFloat = 40
+    static let clockFontSize: CGFloat = 44
+    static let dotsBottom: CGFloat = 12
+    static let dotSize: CGFloat = 4
+    static let activeDotWidth: CGFloat = 15
+    static let title = "Lume"
+    static let localeID = "pt_BR"
+    static let dateFormat = "EEE, d MMM"
+    static let secondaryOpacity: Double = 0.6
+    static let contentFade = Animation.easeOut(duration: 0.25).delay(0.1)
 }
 
 enum NotchRim {

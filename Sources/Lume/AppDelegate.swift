@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var panel: NotchPanel?
     private var model: NotchModel?
     private var screenObserver: Any?
+    private var hover: NotchHoverMonitor?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         showNotch()
@@ -19,6 +20,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showNotch() {
+        hover?.stop()
+        hover = nil
         panel?.orderOut(nil)
         panel = nil
         guard let geometry = NotchGeometry.current() else { return }
@@ -34,6 +37,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.orderFrontRegardless()
         self.panel = panel
         self.model = model
+
+        let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
+        hover.start()
+        self.hover = hover
     }
 
     private func eyeCenterOffset(for geometry: NotchGeometry) -> CGFloat {

@@ -8,6 +8,7 @@ struct NotchView: View {
 
     private var eyeSize: CGSize { OwlEyes.size(forNotchHeight: model.restingSize.height) }
 
+
     var body: some View {
         let flare = NotchCurve.flare(forHeight: model.size.height)
         let radius = NotchCurve.cornerRadius(forHeight: model.size.height)
@@ -22,16 +23,28 @@ struct NotchView: View {
                     height: model.size.height - NotchRim.bottomThickness
                 )
 
-            if model.isResting {
-                HStack(spacing: eyeCenterOffset * 2 - eyeSize.width) {
-                    OwlEye(size: eyeSize, isBlinking: isBlinking)
-                    OwlEye(size: eyeSize, isBlinking: isBlinking)
+            ZStack(alignment: .topLeading) {
+                if model.isOpen {
+                    OpenNotchContent()
+                        .transition(.opacity.animation(OpenLayout.contentFade))
+
+                    OwlMascot(width: OpenLayout.mascotWidth, isBlinking: isBlinking)
+                        .offset(x: OpenLayout.mascotOrigin.x, y: OpenLayout.mascotOrigin.y)
+                        .transition(.scale(scale: OpenLayout.mascotAppearScale, anchor: .topLeading).combined(with: .opacity))
+                } else {
+                    HStack(spacing: eyeCenterOffset * 2 - eyeSize.width) {
+                        OwlEye(size: eyeSize, isBlinking: isBlinking)
+                        OwlEye(size: eyeSize, isBlinking: isBlinking)
+                    }
+                    .position(x: model.size.width / 2, y: model.restingSize.height / 2)
+                    .transition(.opacity)
                 }
-                .frame(height: model.restingSize.height)
-                .transition(.opacity)
             }
+            .frame(width: model.size.width, height: model.size.height, alignment: .topLeading)
+            .clipped()
         }
         .frame(width: canvasSize.width, height: canvasSize.height, alignment: .top)
+        .foregroundStyle(.white)
         .task { await blinkForever() }
     }
 
