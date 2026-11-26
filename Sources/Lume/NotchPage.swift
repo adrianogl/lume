@@ -1,13 +1,14 @@
 import Foundation
 
 enum NotchPage: String, CaseIterable {
-    case clock, week, music
+    case clock, week, music, claudeCode
 
     var title: String {
         switch self {
         case .clock: "Relógio"
         case .week: "Semana"
         case .music: "Música"
+        case .claudeCode: "Claude Code"
         }
     }
 
@@ -16,6 +17,7 @@ enum NotchPage: String, CaseIterable {
         case .clock: "clock"
         case .week: "calendar"
         case .music: "music.note"
+        case .claudeCode: "terminal"
         }
     }
 
@@ -25,6 +27,7 @@ enum NotchPage: String, CaseIterable {
             case .clock: config.modules.clock.enabled
             case .week: config.modules.week.enabled
             case .music: config.modules.music.enabled
+            case .claudeCode: config.modules.claudeCode.enabled
             }
         }
     }

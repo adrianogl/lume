@@ -76,7 +76,7 @@ struct AlertPillView: View {
             return (AlertText.join, { NSWorkspace.shared.open(url) })
         case .claude(let claude):
             guard let bundle = claude.bundleID, !bundle.isEmpty else { return nil }
-            return (ClaudeText.open, { ClaudeCodeMonitor.open(bundleID: bundle) })
+            return (ClaudeText.open, { ClaudeCodeMonitor.open(bundleID: bundle, terminalSession: claude.terminalSession) })
         }
     }
 

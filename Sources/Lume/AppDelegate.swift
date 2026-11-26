@@ -86,6 +86,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             config: config,
             week: week,
             music: music,
+            claude: claude,
             canvasSize: frame.size,
             eyeCenterOffset: eyeCenterOffset(for: geometry)
         )

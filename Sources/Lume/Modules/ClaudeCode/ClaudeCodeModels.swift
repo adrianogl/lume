@@ -12,6 +12,7 @@ struct ClaudeAlert: Identifiable, Equatable {
     let account: String
     let message: String
     let bundleID: String?
+    let terminalSession: String?
 
     var title: String {
         switch kind {
@@ -40,6 +41,18 @@ struct ClaudeAlert: Identifiable, Equatable {
     var subtitle: String {
         [project, account, message].filter { !$0.isEmpty }.joined(separator: " · ")
     }
+
+    var detail: String {
+        [account, message].filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+}
+
+struct ClaudeSessionEntry: Identifiable, Equatable {
+    let alert: ClaudeAlert
+    var isWaiting: Bool
+    let updatedAt: Date
+
+    var id: String { alert.sessionID }
 }
 
 struct ClaudeAccount: Identifiable, Equatable {

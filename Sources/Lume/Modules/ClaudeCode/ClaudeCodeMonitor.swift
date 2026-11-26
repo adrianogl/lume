@@ -3,11 +3,12 @@ import AppKit
 @MainActor
 final class ClaudeCodeMonitor: ObservableObject {
     @Published private(set) var pendingCount = 0
+    @Published private(set) var entries: [ClaudeSessionEntry] = []
 
     private let present: (ClaudeAlert) -> Void
     private var config = ClaudeCodeModuleConfig()
     private var observer: NSObjectProtocol?
-    private var pending: [String: Date] = [:]
+    private var sessions: [String: ClaudeSessionEntry] = [:]
     private var cleanupTimer: Timer?
 
     init(present: @escaping (ClaudeAlert) -> Void) {
@@ -29,14 +30,29 @@ final class ClaudeCodeMonitor: ObservableObject {
             self.observer = nil
             cleanupTimer?.invalidate()
             cleanupTimer = nil
-            pending = [:]
-            publishCount()
+            sessions = [:]
+            publish()
         }
     }
 
-    static func open(bundleID: String?) {
-        guard let bundleID, !bundleID.isEmpty,
-              let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) else { return }
+    static func open(bundleID: String?, terminalSession: String?) {
+        guard let bundleID, !bundleID.isEmpty else { return }
+        let script: String
+        if bundleID == TerminalScript.itermBundle, let session = terminalSession, !session.isEmpty {
+            script = TerminalScript.focusITermSession(session)
+        } else {
+            script = TerminalScript.reopen(bundleID: bundleID)
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            var error: NSDictionary?
+            NSAppleScript(source: script)?.executeAndReturnError(&error)
+            guard error != nil else { return }
+            DispatchQueue.main.async { activate(bundleID: bundleID) }
+        }
+    }
+
+    private static func activate(bundleID: String) {
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) else { return }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true
         NSWorkspace.shared.openApplication(at: url, configuration: configuration)
@@ -47,25 +63,30 @@ final class ClaudeCodeMonitor: ObservableObject {
         let session = info[ClaudeHook.Key.session] ?? ""
 
         if kind == .resolved {
-            if pending.removeValue(forKey: session) != nil { publishCount() }
+            if var entry = sessions[session], entry.isWaiting {
+                entry.isWaiting = false
+                sessions[session] = entry
+                publish()
+            }
             return
         }
         guard isEnabled(kind) else { return }
 
-        pending[session] = Date()
-        publishCount()
-
         let accountPath = info[ClaudeHook.Key.account] ?? ""
         let account = ClaudeAccount(directory: URL(fileURLWithPath: accountPath))
         let cwd = info[ClaudeHook.Key.cwd] ?? ""
-        present(ClaudeAlert(
+        let alert = ClaudeAlert(
             kind: kind,
             sessionID: session,
             project: cwd.isEmpty ? "" : URL(fileURLWithPath: cwd).lastPathComponent,
             account: config.accountNames[accountPath] ?? account.defaultName,
             message: ClaudeText.translate(info[ClaudeHook.Key.message] ?? ""),
-            bundleID: info[ClaudeHook.Key.bundle]
-        ))
+            bundleID: info[ClaudeHook.Key.bundle],
+            terminalSession: info[ClaudeHook.Key.terminalSession]
+        )
+        sessions[session] = ClaudeSessionEntry(alert: alert, isWaiting: kind != .finished, updatedAt: Date())
+        publish()
+        present(alert)
     }
 
     private func isEnabled(_ kind: ClaudeEventKind) -> Bool {
@@ -79,12 +100,17 @@ final class ClaudeCodeMonitor: ObservableObject {
 
     private func dropStale() {
         let limit = Date().addingTimeInterval(-ClaudeHook.staleAfter)
-        let before = pending.count
-        pending = pending.filter { $0.value > limit }
-        if pending.count != before { publishCount() }
+        let before = sessions.count
+        sessions = sessions.filter { $0.value.updatedAt > limit }
+        if sessions.count != before { publish() }
     }
 
-    private func publishCount() {
-        pendingCount = pending.count
+    private func publish() {
+        entries = sessions.values.sorted { lhs, rhs in
+            if lhs.isWaiting != rhs.isWaiting { return lhs.isWaiting }
+            if lhs.isWaiting, lhs.alert.kind != rhs.alert.kind { return lhs.alert.kind == .permission }
+            return lhs.updatedAt > rhs.updatedAt
+        }
+        pendingCount = entries.filter(\.isWaiting).count
     }
 }

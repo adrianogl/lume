@@ -5,6 +5,7 @@ struct OpenNotchContent: View {
     @ObservedObject var config: ConfigStore
     @ObservedObject var week: WeekEventStore
     let music: MusicController
+    let claude: ClaudeCodeMonitor
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,6 +17,8 @@ struct OpenNotchContent: View {
                     WeekPageView(store: week, showWeekend: config.config.modules.week.showWeekend)
                 case .music:
                     MusicPageView(music: music)
+                case .claudeCode:
+                    ClaudeCardView(monitor: claude)
                 case nil:
                     Text(OpenLayout.noModules)
                         .font(.system(size: WeekLayout.rowSize))

@@ -312,6 +312,23 @@ enum ClaudeText {
     static let later = "Depois"
     static let defaultAccount = "Pessoal"
     static let pendingLabel = "Claude Code esperando você"
+    static let cardTitle = "Claude Code"
+    static let cardEmpty = "Nenhum aviso nas últimas 2 horas."
+
+    static func waitingCount(_ count: Int) -> String {
+        switch count {
+        case 0: "Nada esperando"
+        case 1: "1 esperando você"
+        default: "\(count) esperando você"
+        }
+    }
+
+    static func ago(from date: Date, to now: Date) -> String {
+        let minutes = Int(now.timeIntervalSince(date) / 60)
+        if minutes < 1 { return "agora" }
+        if minutes < 60 { return "\(minutes) min" }
+        return "\(minutes / 60) h"
+    }
     static let permissionPrefix = "Claude needs your permission to use "
     static let waitingMessage = "Claude is waiting for your input"
     static let usesTool = "Quer usar o "
@@ -326,6 +343,14 @@ enum ClaudeText {
         }
         return message
     }
+}
+
+enum ClaudeCard {
+    static let refresh: TimeInterval = 30
+    static let rowHeight: CGFloat = 24
+    static let rowSpacing: CGFloat = 4
+    static let listHeight: CGFloat = 80
+    static let textSize: CGFloat = 11
 }
 
 enum ClaudeHook {
@@ -350,5 +375,6 @@ enum ClaudeHook {
         static let message = "message"
         static let account = "account"
         static let bundle = "bundle"
+        static let terminalSession = "terminalSession"
     }
 }

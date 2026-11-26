@@ -193,6 +193,9 @@ final class NotchModel: ObservableObject {
     }
 
     private func open() {
+        if isClaudeWaiting, let index = pages.firstIndex(of: .claudeCode) {
+            pageIndex = index
+        }
         withAnimation(NotchMotion.resize) { isOpen = true }
         resize(toFit: NotchHover.openSize)
     }

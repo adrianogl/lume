@@ -23,7 +23,9 @@ enum ClaudeHookCLI {
             ClaudeHook.Key.cwd: payload["cwd"] as? String ?? "",
             ClaudeHook.Key.message: String(text.prefix(ClaudeHook.messageLimit)),
             ClaudeHook.Key.account: account,
-            ClaudeHook.Key.bundle: ProcessInfo.processInfo.environment["__CFBundleIdentifier"] ?? ""
+            ClaudeHook.Key.bundle: ProcessInfo.processInfo.environment["__CFBundleIdentifier"] ?? "",
+            ClaudeHook.Key.terminalSession: ProcessInfo.processInfo.environment["ITERM_SESSION_ID"]
+                .flatMap { $0.split(separator: ":").last.map(String.init) } ?? ""
         ]
         DistributedNotificationCenter.default().postNotificationName(
             ClaudeHook.notification,
