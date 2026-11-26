@@ -76,6 +76,37 @@ enum OpenLayout {
     static let contentFade = Animation.easeOut(duration: 0.25).delay(0.1)
 }
 
+enum MeetingLinkPattern {
+    static let regex = #"https://(?:teams\.microsoft\.com/l/meetup-join|teams\.live\.com/meet|meet\.google\.com|[\w.-]*zoom\.us/(?:j|my|w))[^\s<>"')\]]*"#
+    static let providers = ["teams": "Teams", "meet.google": "Meet", "zoom": "Zoom"]
+}
+
+enum AlertLayout {
+    static let size = CGSize(width: 400, height: 60)
+    static let textRefresh: TimeInterval = 15
+    static let belowCameraHeight: CGFloat = 48
+    static let duration: Double = 8
+    static let leaveDelay: Double = 2
+    static let queueGap: Double = 0.6
+    static let checkInterval: TimeInterval = 15
+    static let firingWindow: TimeInterval = 60
+    static let mascotWidth: CGFloat = 36
+    static let horizontalPadding: CGFloat = 12
+    static let spacing: CGFloat = 10
+    static let titleSize: CGFloat = 13
+    static let subtitleSize: CGFloat = 11
+    static let buttonHeight: CGFloat = 22
+    static let buttonFontSize: CGFloat = 11
+    static let selectableMinutes = [1, 5, 10, 15, 30]
+}
+
+enum AlertText {
+    static let startedNow = "Começou agora"
+    static let join = "Entrar"
+    static let later = "Depois"
+    static let close = "Fechar"
+}
+
 enum SettingsLayout {
     static let size = CGSize(width: 640, height: 480)
     static let sidebarWidth: CGFloat = 180
@@ -152,4 +183,8 @@ enum OwlEyes {
     static func size(forNotchHeight height: CGFloat) -> CGSize {
         CGSize(width: (height * widthRatio).rounded(), height: (height * heightRatio).rounded())
     }
+}
+
+enum LaunchOptions {
+    static let demoAlert = "LUME_DEMO_ALERT"
 }

@@ -99,7 +99,8 @@ final class WeekEventStore: ObservableObject {
                     start: $0.startDate,
                     end: $0.endDate,
                     isAllDay: $0.isAllDay,
-                    color: Color(cgColor: $0.calendar.cgColor)
+                    color: Color(cgColor: $0.calendar.cgColor),
+                    joinURL: MeetingLink.find(in: [$0.url?.absoluteString, $0.location, $0.notes])
                 )
             }
             .sorted { $0.start < $1.start }
@@ -113,7 +114,7 @@ final class WeekEventStore: ObservableObject {
             events = ICalParser.events(from: text)
                 .filter { $0.end > interval.start && $0.start < interval.end }
                 .map {
-                    CalendarEvent(id: $0.uid, title: $0.summary, start: $0.start, end: $0.end, isAllDay: $0.isAllDay, color: NotchRim.coral)
+                    CalendarEvent(id: $0.uid, title: $0.summary, start: $0.start, end: $0.end, isAllDay: $0.isAllDay, color: NotchRim.coral, joinURL: MeetingLink.find(in: $0.linkTexts))
                 }
                 .sorted { $0.start < $1.start }
             state = .ready

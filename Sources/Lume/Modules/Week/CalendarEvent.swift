@@ -7,6 +7,15 @@ struct CalendarEvent: Identifiable, Equatable {
     let end: Date
     let isAllDay: Bool
     let color: Color
+    var joinURL: URL? = nil
+}
+
+struct EventAlert: Identifiable, Equatable {
+    let event: CalendarEvent
+    let leadMinutes: Int
+
+    var id: String { "\(event.id)|\(leadMinutes)" }
+    var isStart: Bool { leadMinutes == 0 }
 }
 
 struct CalendarChoice: Identifiable, Equatable {

@@ -35,6 +35,11 @@ struct NotchView: View {
                             .offset(x: OpenLayout.mascotOrigin.x, y: OpenLayout.mascotOrigin.y)
                             .transition(.scale(scale: OpenLayout.mascotAppearScale, anchor: .topLeading).combined(with: .opacity))
                     }
+                } else if let alert = model.alert {
+                    AlertPillView(alert: alert, isBlinking: isBlinking, dismiss: model.dismissAlert)
+                        .padding(.top, model.contentTopInset)
+                        .frame(width: model.size.width, height: model.size.height)
+                        .transition(.opacity.animation(OpenLayout.contentFade))
                 } else {
                     HStack(spacing: eyeCenterOffset * 2 - eyeSize.width) {
                         OwlEye(size: eyeSize, isBlinking: isBlinking)

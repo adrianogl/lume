@@ -41,6 +41,7 @@ struct WeekModuleConfig: Codable, Equatable {
     var calendars: [String] = []
     var weekStartsOn = WeekStart.monday
     var showWeekend = true
+    var alerts = EventAlertsConfig()
 
     init() {}
 
@@ -51,6 +52,20 @@ struct WeekModuleConfig: Codable, Equatable {
         calendars = try container.decodeIfPresent([String].self, forKey: .calendars) ?? []
         weekStartsOn = try container.decodeIfPresent(WeekStart.self, forKey: .weekStartsOn) ?? .monday
         showWeekend = try container.decodeIfPresent(Bool.self, forKey: .showWeekend) ?? true
+        alerts = try container.decodeIfPresent(EventAlertsConfig.self, forKey: .alerts) ?? EventAlertsConfig()
+    }
+}
+
+struct EventAlertsConfig: Codable, Equatable {
+    var minutesBefore = [5]
+    var atStart = true
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        minutesBefore = try container.decodeIfPresent([Int].self, forKey: .minutesBefore) ?? [5]
+        atStart = try container.decodeIfPresent(Bool.self, forKey: .atStart) ?? true
     }
 }
 

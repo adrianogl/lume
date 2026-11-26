@@ -11,6 +11,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var swipe: PageSwipeMonitor?
     private let config = ConfigStore()
     private let week = WeekEventStore()
+    private lazy var alerts = EventAlertScheduler(store: week) { [weak self] alert in
+        self?.model?.present(alert)
+    }
     private var configSubscription: AnyCancellable?
     private lazy var settings = SettingsWindowController(config: config, week: week)
 
@@ -31,6 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func apply(_ newConfig: LumeConfig) {
         week.apply(newConfig.modules.week)
+        alerts.apply(newConfig.modules.week)
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
 
@@ -43,7 +47,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel = nil
         guard let geometry = NotchGeometry.current() else { return }
 
-        let model = NotchModel(restingSize: geometry.restingSize)
+        let model = NotchModel(
+            restingSize: geometry.restingSize,
+            contentTopInset: geometry.hasPhysicalNotch ? geometry.notchSize.height : 0
+        )
         model.setPages(NotchPage.enabled(in: config.config))
         model.openSettings = { [weak self] in self?.settings.show(on: geometry.screen) }
         let frame = geometry.windowFrame
@@ -71,6 +78,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let swipe = PageSwipeMonitor(model: model)
         swipe.start()
         self.swipe = swipe
+
+        if ProcessInfo.processInfo.environment[LaunchOptions.demoAlert] != nil {
+            model.present(DemoAlert.make())
+        }
     }
 
     private func eyeCenterOffset(for geometry: NotchGeometry) -> CGFloat {

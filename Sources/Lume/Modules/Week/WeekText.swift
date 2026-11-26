@@ -36,7 +36,7 @@ enum WeekText {
     }
 
     static func relative(from now: Date, to date: Date, calendar: Calendar) -> String {
-        let minutes = Int(date.timeIntervalSince(now) / 60)
+        let minutes = Int((date.timeIntervalSince(now) / 60).rounded(.up))
         if minutes < 60 { return "em \(max(minutes, 1)) min" }
         if calendar.isDate(date, inSameDayAs: now) {
             let rest = minutes % 60

@@ -6,12 +6,31 @@ final class NotchModel: ObservableObject {
     @Published private(set) var isOpen = false
     @Published private(set) var pages: [NotchPage] = []
     @Published private(set) var pageIndex = 0
+    @Published private(set) var alert: EventAlert?
     let restingSize: CGSize
+    let contentTopInset: CGFloat
     var openSettings: () -> Void = {}
+    private var hoverTask: Task<Void, Never>?
+    private var alertTask: Task<Void, Never>?
+    private var alertQueue: [EventAlert] = []
+    private var isHovering = false
+
+    init(restingSize: CGSize, contentTopInset: CGFloat) {
+        self.restingSize = restingSize
+        self.contentTopInset = contentTopInset
+        self.size = restingSize
+    }
+
+    private var alertSize: CGSize {
+        let contentHeight = contentTopInset > 0 ? AlertLayout.belowCameraHeight : AlertLayout.size.height
+        return CGSize(width: AlertLayout.size.width, height: contentTopInset + contentHeight)
+    }
 
     var currentPage: NotchPage? {
         pages.indices.contains(pageIndex) ? pages[pageIndex] : nil
     }
+
+    var isResting: Bool { size == restingSize }
 
     func setPages(_ newPages: [NotchPage]) {
         let current = currentPage
@@ -27,14 +46,6 @@ final class NotchModel: ObservableObject {
     func turnPage(forward: Bool) {
         showPage(pageIndex + (forward ? 1 : -1))
     }
-    private var hoverTask: Task<Void, Never>?
-
-    init(restingSize: CGSize) {
-        self.restingSize = restingSize
-        self.size = restingSize
-    }
-
-    var isResting: Bool { size == restingSize }
 
     func resize(toFit content: CGSize) {
         let target = CGSize(
@@ -50,7 +61,18 @@ final class NotchModel: ObservableObject {
     }
 
     func hoverChanged(_ inside: Bool) {
-        guard inside != isOpen || hoverTask != nil else { return }
+        guard inside != isHovering else { return }
+        isHovering = inside
+
+        if alert != nil {
+            if inside {
+                alertTask?.cancel()
+            } else {
+                scheduleAlertDismiss(after: AlertLayout.leaveDelay)
+            }
+            return
+        }
+
         hoverTask?.cancel()
         hoverTask = nil
         guard inside != isOpen else { return }
@@ -63,6 +85,41 @@ final class NotchModel: ObservableObject {
         }
     }
 
+    func present(_ newAlert: EventAlert) {
+        alertQueue.append(newAlert)
+        showNextAlert()
+    }
+
+    func dismissAlert() {
+        alertTask?.cancel()
+        alertTask = nil
+        withAnimation(NotchMotion.close) { alert = nil }
+        rest()
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(AlertLayout.queueGap))
+            self?.showNextAlert()
+        }
+    }
+
+    private func showNextAlert() {
+        guard !isOpen, alert == nil, !alertQueue.isEmpty else { return }
+        let next = alertQueue.removeFirst()
+        withAnimation(NotchMotion.resize) { alert = next }
+        resize(toFit: alertSize)
+        if !isHovering {
+            scheduleAlertDismiss(after: AlertLayout.duration)
+        }
+    }
+
+    private func scheduleAlertDismiss(after delay: Double) {
+        alertTask?.cancel()
+        alertTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled, let self, !self.isHovering else { return }
+            self.dismissAlert()
+        }
+    }
+
     private func open() {
         withAnimation(NotchMotion.resize) { isOpen = true }
         resize(toFit: NotchHover.openSize)
@@ -71,5 +128,6 @@ final class NotchModel: ObservableObject {
     private func close() {
         withAnimation(NotchMotion.close) { isOpen = false }
         rest()
+        showNextAlert()
     }
 }

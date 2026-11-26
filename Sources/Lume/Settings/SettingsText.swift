@@ -17,7 +17,14 @@ enum SettingsText {
     static let calendarsSection = "Calendários"
     static let calendarsFooter = "Com todos marcados, calendários novos também aparecem."
     static let noCalendars = "Nenhum calendário encontrado. Confira o acesso em Ajustes do Sistema › Privacidade e Segurança › Calendários."
+    static let alertsSection = "Avisos"
+    static let alertAtStart = "Na hora que começa"
+    static let alertsFooter = "O notch mostra uma pílula com o evento. Eventos de dia todo não avisam."
     static let displaySection = "Exibição"
+
+    static func minutesBefore(_ minutes: Int) -> String {
+        "\(minutes) min antes"
+    }
     static let weekStartLabel = "Semana começa"
     static let monday = "Segunda"
     static let sunday = "Domingo"

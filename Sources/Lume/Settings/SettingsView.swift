@@ -95,6 +95,17 @@ struct SettingsView: View {
                 }
             }
 
+            Section {
+                ForEach(AlertLayout.selectableMinutes, id: \.self) { minutes in
+                    Toggle(SettingsText.minutesBefore(minutes), isOn: alertMinutesBinding(minutes))
+                }
+                Toggle(SettingsText.alertAtStart, isOn: binding(\.modules.week.alerts.atStart))
+            } header: {
+                Text(SettingsText.alertsSection)
+            } footer: {
+                Text(SettingsText.alertsFooter).frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             Section(SettingsText.displaySection) {
                 Picker(SettingsText.weekStartLabel, selection: binding(\.modules.week.weekStartsOn)) {
                     Text(SettingsText.monday).tag(WeekStart.monday)
@@ -148,6 +159,19 @@ struct SettingsView: View {
         guard let url = URL(string: text), let scheme = url.scheme, ["http", "https", "webcal"].contains(scheme) else { return }
         let fetchURL = scheme == "webcal" ? URL(string: "https" + text.dropFirst("webcal".count)) ?? url : url
         config.update { $0.modules.week.source = .ical(fetchURL) }
+    }
+
+    private func alertMinutesBinding(_ minutes: Int) -> Binding<Bool> {
+        Binding(
+            get: { config.config.modules.week.alerts.minutesBefore.contains(minutes) },
+            set: { isOn in
+                config.update { current in
+                    var list = current.modules.week.alerts.minutesBefore.filter { $0 != minutes }
+                    if isOn { list.append(minutes) }
+                    current.modules.week.alerts.minutesBefore = list.sorted(by: >)
+                }
+            }
+        )
     }
 
     private func calendarBinding(_ title: String) -> Binding<Bool> {

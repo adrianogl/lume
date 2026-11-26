@@ -7,6 +7,7 @@ enum ICalParser {
         let start: Date
         let end: Date
         let isAllDay: Bool
+        let linkTexts: [String?]
     }
 
     static func events(from text: String) -> [RawEvent] {
@@ -61,7 +62,8 @@ enum ICalParser {
             summary: unescape(fields["SUMMARY"]?.value ?? ""),
             start: start,
             end: end,
-            isAllDay: isAllDay
+            isAllDay: isAllDay,
+            linkTexts: [fields["URL"]?.value, fields["LOCATION"].map { unescape($0.value) }, fields["DESCRIPTION"].map { unescape($0.value) }]
         )
     }
 
