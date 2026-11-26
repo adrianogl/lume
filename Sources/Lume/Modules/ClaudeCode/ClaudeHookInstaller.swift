@@ -71,7 +71,8 @@ enum ClaudeSettingsFile {
         if FileManager.default.fileExists(atPath: file.path), !FileManager.default.fileExists(atPath: backup.path) {
             try FileManager.default.copyItem(at: file, to: backup)
         }
-        let data = try JSONSerialization.data(withJSONObject: root, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
-        try data.write(to: file, options: .atomic)
+        let original = (try? String(contentsOf: file, encoding: .utf8)).flatMap { try? OrderedJSON.parse($0) }
+        let tree = original?.merged(with: root) ?? OrderedJSON.from(root)
+        try (tree.serialized() + "\n").write(to: file, atomically: true, encoding: .utf8)
     }
 }
