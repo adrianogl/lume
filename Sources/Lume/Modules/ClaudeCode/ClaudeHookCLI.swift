@@ -13,8 +13,12 @@ enum ClaudeHookCLI {
             ?? FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(ClaudeHook.directoryPrefix).path
 
         var text = message
-        if kind == .finished, let transcript = payload["transcript_path"] as? String {
-            text = lastAssistantText(transcriptPath: transcript) ?? ""
+        var title = ""
+        if kind != .resolved, let transcript = payload["transcript_path"] as? String {
+            title = sessionTitle(transcriptPath: transcript) ?? ""
+            if kind == .finished {
+                text = lastAssistantText(transcriptPath: transcript) ?? ""
+            }
         }
 
         let info: [String: String] = [
@@ -22,6 +26,7 @@ enum ClaudeHookCLI {
             ClaudeHook.Key.session: payload["session_id"] as? String ?? "",
             ClaudeHook.Key.cwd: payload["cwd"] as? String ?? "",
             ClaudeHook.Key.message: String(text.prefix(ClaudeHook.messageLimit)),
+            ClaudeHook.Key.title: title,
             ClaudeHook.Key.account: account,
             ClaudeHook.Key.bundle: ProcessInfo.processInfo.environment["__CFBundleIdentifier"] ?? "",
             ClaudeHook.Key.terminalSession: ProcessInfo.processInfo.environment["ITERM_SESSION_ID"]
@@ -52,6 +57,36 @@ enum ClaudeHookCLI {
     private static func value(after flag: String, in arguments: [String]) -> String? {
         guard let index = arguments.firstIndex(of: flag), arguments.indices.contains(index + 1) else { return nil }
         return arguments[index + 1]
+    }
+
+    private static func sessionTitle(transcriptPath: String) -> String? {
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: transcriptPath), options: .alwaysMapped) else { return nil }
+        for key in ClaudeHook.titleKeys {
+            let marker = Data("\"\(key)\":\"".utf8)
+            guard let range = data.range(of: marker, options: .backwards) else { continue }
+            if let value = jsonString(in: data, from: range.upperBound), !value.isEmpty {
+                return value
+            }
+        }
+        return nil
+    }
+
+    private static func jsonString(in data: Data, from start: Data.Index) -> String? {
+        var index = start
+        var escaped = false
+        while index < data.endIndex {
+            let byte = data[index]
+            if escaped {
+                escaped = false
+            } else if byte == UInt8(ascii: "\\") {
+                escaped = true
+            } else if byte == UInt8(ascii: "\"") {
+                let quoted = Data("\"".utf8) + data[start..<index] + Data("\"".utf8)
+                return try? JSONDecoder().decode(String.self, from: quoted)
+            }
+            index = data.index(after: index)
+        }
+        return nil
     }
 
     private static func lastAssistantText(transcriptPath: String) -> String? {

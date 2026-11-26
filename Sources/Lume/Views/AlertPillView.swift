@@ -27,10 +27,16 @@ struct AlertPillView: View {
                                 .background(RoundedRectangle(cornerRadius: 4).fill(claude.tagColor.opacity(0.16)))
                         }
                     }
+                    if case .claude(let claude) = alert, !claude.sessionTitle.isEmpty {
+                        Text(claude.sessionTitle)
+                            .font(.system(size: AlertLayout.sessionTitleSize, weight: .semibold))
+                            .opacity(0.9)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                     Text(subtitle(now: timeline.date))
                         .font(.system(size: AlertLayout.subtitleSize))
                         .opacity(WeekLayout.secondaryOpacity)
-                        .lineLimit(2)
+                        .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 

@@ -99,6 +99,7 @@ enum AlertLayout {
     static let textRefresh: TimeInterval = 15
     static let belowCameraHeight: CGFloat = 48
     static let verticalPadding: CGFloat = 11
+    static let sessionTitleSize: CGFloat = 12
     static let duration: Double = 8
     static let leaveDelay: Double = 2
     static let queueGap: Double = 0.6
@@ -347,10 +348,11 @@ enum ClaudeText {
 
 enum ClaudeCard {
     static let refresh: TimeInterval = 30
-    static let rowHeight: CGFloat = 24
-    static let rowSpacing: CGFloat = 4
-    static let listHeight: CGFloat = 80
+    static let rowSpacing: CGFloat = 5
+    static let listHeight: CGFloat = 132
+    static let openSize = CGSize(width: 460, height: 200)
     static let textSize: CGFloat = 11
+    static let titleSize: CGFloat = 11.5
 }
 
 enum ClaudeHook {
@@ -362,6 +364,7 @@ enum ClaudeHook {
     static let executableMarker = "Lume"
     static let backupExtension = "lume-backup"
     static let notification = Notification.Name("local.lume.claude-hook")
+    static let titleKeys = ["customTitle", "aiTitle"]
     static let events = ["Notification", "Stop", "UserPromptSubmit", "PostToolUse", "SessionEnd"]
     static let messageLimit = 160
     static let transcriptTail: UInt64 = 65_536
@@ -376,5 +379,6 @@ enum ClaudeHook {
         static let account = "account"
         static let bundle = "bundle"
         static let terminalSession = "terminalSession"
+        static let title = "title"
     }
 }

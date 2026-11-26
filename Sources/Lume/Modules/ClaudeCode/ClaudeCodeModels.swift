@@ -13,6 +13,7 @@ struct ClaudeAlert: Identifiable, Equatable {
     let message: String
     let bundleID: String?
     let terminalSession: String?
+    let sessionTitle: String
 
     var title: String {
         switch kind {

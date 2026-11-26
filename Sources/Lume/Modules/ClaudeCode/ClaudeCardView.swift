@@ -47,43 +47,48 @@ private struct ClaudeRow: View {
 
     var body: some View {
         let alert = entry.alert
-        HStack(spacing: 7) {
-            Text(alert.tag)
-                .font(.system(size: ClaudeLayout.tagSize, weight: .bold))
-                .textCase(.uppercase)
-                .foregroundStyle(alert.tagColor)
-                .padding(.horizontal, 4)
-                .padding(.vertical, 1)
-                .background(RoundedRectangle(cornerRadius: 4).fill(alert.tagColor.opacity(0.16)))
-            Text(alert.project).font(.system(size: ClaudeCard.textSize, weight: .semibold)).lineLimit(1).layoutPriority(1)
-            Text(alert.detail)
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(alignment: .firstTextBaseline, spacing: 7) {
+                Text(alert.tag)
+                    .font(.system(size: ClaudeLayout.tagSize, weight: .bold))
+                    .textCase(.uppercase)
+                    .foregroundStyle(alert.tagColor)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1)
+                    .background(RoundedRectangle(cornerRadius: 4).fill(alert.tagColor.opacity(0.16)))
+                Text(alert.sessionTitle.isEmpty ? alert.project : alert.sessionTitle)
+                    .font(.system(size: ClaudeCard.titleSize, weight: .semibold))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text(ClaudeText.ago(from: entry.updatedAt, to: now))
+                    .font(.system(size: 10))
+                    .monospacedDigit()
+                    .opacity(0.4)
+                if let bundle = alert.bundleID, !bundle.isEmpty {
+                    Button {
+                        ClaudeCodeMonitor.open(bundleID: bundle, terminalSession: alert.terminalSession)
+                    } label: {
+                        Text(ClaudeText.open)
+                            .font(.system(size: 9.5, weight: .bold))
+                            .foregroundStyle(entry.isWaiting ? Color.black : Color.white)
+                            .padding(.horizontal, 8)
+                            .frame(height: 17)
+                            .background(Capsule().fill(entry.isWaiting ? Color.white : Color.white.opacity(0.14)))
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            Text(alert.subtitle)
                 .font(.system(size: ClaudeCard.textSize))
                 .opacity(WeekLayout.secondaryOpacity)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text(ClaudeText.ago(from: entry.updatedAt, to: now))
-                .font(.system(size: 10))
-                .monospacedDigit()
-                .opacity(0.4)
-            if let bundle = alert.bundleID, !bundle.isEmpty {
-                Button {
-                    ClaudeCodeMonitor.open(bundleID: bundle, terminalSession: alert.terminalSession)
-                } label: {
-                    Text(ClaudeText.open)
-                        .font(.system(size: 9.5, weight: .bold))
-                        .foregroundStyle(entry.isWaiting ? Color.black : Color.white)
-                        .padding(.horizontal, 8)
-                        .frame(height: 17)
-                        .background(Capsule().fill(entry.isWaiting ? Color.white : Color.white.opacity(0.14)))
-                        .contentShape(Capsule())
-                }
-                .buttonStyle(.plain)
-            }
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.leading, 8)
-        .padding(.trailing, 4)
-        .frame(height: ClaudeCard.rowHeight)
-        .background(RoundedRectangle(cornerRadius: 7).fill(.white.opacity(entry.isWaiting ? 0.07 : 0.035)))
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(entry.isWaiting ? 0.07 : 0.035)))
         .opacity(entry.isWaiting ? 1 : 0.6)
     }
 }

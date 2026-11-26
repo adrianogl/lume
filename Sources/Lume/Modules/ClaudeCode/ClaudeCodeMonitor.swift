@@ -82,7 +82,8 @@ final class ClaudeCodeMonitor: ObservableObject {
             account: config.accountNames[accountPath] ?? account.defaultName,
             message: ClaudeText.translate(info[ClaudeHook.Key.message] ?? ""),
             bundleID: info[ClaudeHook.Key.bundle],
-            terminalSession: info[ClaudeHook.Key.terminalSession]
+            terminalSession: info[ClaudeHook.Key.terminalSession],
+            sessionTitle: info[ClaudeHook.Key.title] ?? ""
         )
         sessions[session] = ClaudeSessionEntry(alert: alert, isWaiting: kind != .finished, updatedAt: Date())
         publish()

@@ -44,6 +44,13 @@ final class NotchModel: ObservableObject {
     func showPage(_ index: Int) {
         guard pages.indices.contains(index) else { return }
         withAnimation(.easeOut(duration: 0.2)) { pageIndex = index }
+        if isOpen {
+            resize(toFit: openSize)
+        }
+    }
+
+    private var openSize: CGSize {
+        currentPage?.openSize ?? NotchHover.openSize
     }
 
     func turnPage(forward: Bool) {
@@ -197,7 +204,7 @@ final class NotchModel: ObservableObject {
             pageIndex = index
         }
         withAnimation(NotchMotion.resize) { isOpen = true }
-        resize(toFit: NotchHover.openSize)
+        resize(toFit: openSize)
     }
 
     private func close() {

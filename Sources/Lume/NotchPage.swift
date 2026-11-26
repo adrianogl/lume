@@ -21,6 +21,13 @@ enum NotchPage: String, CaseIterable {
         }
     }
 
+    var openSize: CGSize {
+        switch self {
+        case .claudeCode: ClaudeCard.openSize
+        default: NotchHover.openSize
+        }
+    }
+
     static func enabled(in config: LumeConfig) -> [NotchPage] {
         allCases.filter { page in
             switch page {
