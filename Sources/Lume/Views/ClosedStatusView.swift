@@ -4,6 +4,7 @@ struct ClosedStatusView: View {
     let meeting: MeetingStatus?
     let isMusicPlaying: Bool
     let isClaudeWaiting: Bool
+    let pullRequestCount: Int
     let eyeSize: CGSize
     let eyeCenterOffset: CGFloat
 
@@ -67,6 +68,18 @@ struct ClosedStatusView: View {
                     .fill(ClaudeLayout.markColor)
                     .frame(width: ClaudeLayout.markSize, height: ClaudeLayout.markSize)
                     .accessibilityLabel(ClaudeText.pendingLabel)
+            }
+            if pullRequestCount > 0 {
+                HStack(spacing: 2) {
+                    Image(systemName: PRLayout.symbol)
+                        .font(.system(size: PRLayout.symbolSize, weight: .semibold))
+                    Text("\(pullRequestCount)")
+                        .font(.system(size: PRLayout.countSize, weight: .bold))
+                        .monospacedDigit()
+                }
+                .foregroundStyle(NotchRim.amber)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(PRText.attentionLabel)
             }
         }
     }

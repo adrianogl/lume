@@ -6,6 +6,7 @@ struct NotchView: View {
     let week: WeekEventStore
     let music: MusicController
     let claude: ClaudeCodeMonitor
+    let pullRequests: PullRequestMonitor
     let canvasSize: CGSize
     let eyeCenterOffset: CGFloat
     @State private var isBlinking = false
@@ -40,7 +41,7 @@ struct NotchView: View {
 
             ZStack(alignment: .topLeading) {
                 if model.isOpen {
-                    OpenNotchContent(model: model, config: config, week: week, music: music, claude: claude)
+                    OpenNotchContent(model: model, config: config, week: week, music: music, claude: claude, pullRequests: pullRequests)
                         .transition(OpenLayout.contentTransition)
 
                     if model.currentPage == .clock {
@@ -58,6 +59,7 @@ struct NotchView: View {
                         meeting: model.meeting,
                         isMusicPlaying: model.isMusicActive,
                         isClaudeWaiting: model.isClaudeWaiting,
+                        pullRequestCount: model.pullRequestCount,
                         eyeSize: eyeSize,
                         eyeCenterOffset: eyeCenterOffset
                     )

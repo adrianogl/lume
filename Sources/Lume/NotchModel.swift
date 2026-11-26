@@ -11,6 +11,7 @@ final class NotchModel: ObservableObject {
     @Published private(set) var meeting: MeetingStatus?
     @Published private(set) var isMusicActive = false
     @Published private(set) var isClaudeWaiting = false
+    @Published private(set) var pullRequestCount = 0
     var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
@@ -19,6 +20,7 @@ final class NotchModel: ObservableObject {
     private var alertTask: Task<Void, Never>?
     private var alertQueue: [NotchAlert] = []
     private var isHovering = false
+    private var hasNewPullRequestAlert = false
 
     init(restingSize: CGSize, contentTopInset: CGFloat) {
         self.restingSize = restingSize
@@ -72,8 +74,10 @@ final class NotchModel: ObservableObject {
     }
 
     var baseSize: CGSize {
-        let icons = (isMusicActive ? 1 : 0) + (isClaudeWaiting ? 1 : 0)
-        let iconExtra = CGFloat(icons) * ClosedLayout.iconSlot
+        let hasPullRequests = pullRequestCount > 0
+        let icons = (isMusicActive ? 1 : 0) + (isClaudeWaiting ? 1 : 0) + (hasPullRequests ? 1 : 0)
+        let countExtra = hasPullRequests ? PRLayout.countWidth : 0
+        let iconExtra = CGFloat(icons) * ClosedLayout.iconSlot + countExtra
         if contentTopInset > 0 {
             var extra = iconExtra
             if let meeting {
@@ -85,7 +89,7 @@ final class NotchModel: ObservableObject {
             let width = (meeting.next == nil ? MeetingLayout.compactWidth : MeetingLayout.endingWidth) + iconExtra
             return CGSize(width: max(width, restingSize.width), height: restingSize.height)
         }
-        let extra = icons > 1 ? ClosedLayout.twoIconsExtra : 0
+        let extra = CGFloat(max(icons - 1, 0)) * ClosedLayout.twoIconsExtra + countExtra
         return CGSize(width: restingSize.width + extra, height: restingSize.height)
     }
 
@@ -95,6 +99,18 @@ final class NotchModel: ObservableObject {
         if !isOpen, alert == nil {
             rest()
         }
+    }
+
+    func setPullRequestCount(_ count: Int) {
+        guard count != pullRequestCount else { return }
+        withAnimation(NotchMotion.resize) { pullRequestCount = count }
+        if !isOpen, alert == nil {
+            rest()
+        }
+    }
+
+    func markNewPullRequestAlert() {
+        hasNewPullRequestAlert = true
     }
 
     func setMusicActive(_ active: Bool) {
@@ -202,7 +218,10 @@ final class NotchModel: ObservableObject {
     private func open() {
         if isClaudeWaiting, let index = pages.firstIndex(of: .claudeCode) {
             pageIndex = index
+        } else if hasNewPullRequestAlert, let index = pages.firstIndex(of: .pullRequests) {
+            pageIndex = index
         }
+        hasNewPullRequestAlert = false
         withAnimation(NotchMotion.resize) { isOpen = true }
         resize(toFit: openSize)
     }

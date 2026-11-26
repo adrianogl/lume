@@ -20,13 +20,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self?.model?.present(.claude(alert))
     }
     private var claudeSubscription: AnyCancellable?
+    private lazy var pullRequests = PullRequestMonitor { [weak self] alert in
+        self?.model?.markNewPullRequestAlert()
+        self?.model?.present(.pullRequest(alert))
+    }
+    private var pullRequestSubscription: AnyCancellable?
     private lazy var meetings = MeetingTracker(store: week) { [weak self] status in
         guard ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] == nil else { return }
         self?.model?.setMeeting(status)
     }
     private var configSubscription: AnyCancellable?
     private var eventsSubscription: AnyCancellable?
-    private lazy var settings = SettingsWindowController(config: config, week: week)
+    private lazy var settings = SettingsWindowController(config: config, week: week, pullRequests: pullRequests)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         config.start()
@@ -36,6 +41,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         claudeSubscription = claude.$pendingCount.sink { [weak self] count in
             self?.model?.setClaudeWaiting(count > 0)
+        }
+        pullRequestSubscription = pullRequests.$attentionCount.sink { [weak self] count in
+            self?.model?.setPullRequestCount(count)
         }
         musicSubscription = music.$isActive.sink { [weak self] active in
             self?.model?.setMusicActive(active)
@@ -58,6 +66,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         meetings.apply(newConfig.modules.week)
         music.apply(newConfig.modules.music)
         claude.apply(newConfig.modules.claudeCode)
+        pullRequests.apply(newConfig.modules.pullRequests)
         model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
@@ -87,6 +96,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             week: week,
             music: music,
             claude: claude,
+            pullRequests: pullRequests,
             canvasSize: frame.size,
             eyeCenterOffset: eyeCenterOffset(for: geometry)
         )
@@ -100,6 +110,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         meetings.update()
         model.setMusicActive(music.isActive)
         model.setClaudeWaiting(claude.pendingCount > 0)
+        model.setPullRequestCount(pullRequests.attentionCount)
 
         let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
         hover.start()

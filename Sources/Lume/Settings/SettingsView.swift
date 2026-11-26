@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var config: ConfigStore
     @ObservedObject var week: WeekEventStore
+    let pullRequests: PullRequestMonitor
     @State private var selection: SettingsSection = .week
     @State private var icalText = ""
     @State private var chosenSourceKind: SourceKind?
@@ -32,6 +33,7 @@ struct SettingsView: View {
                 case .week: weekSettings
                 case .music: musicSettings
                 case .claudeCode: ClaudeCodeSettingsView(config: config)
+                case .pullRequests: PullRequestSettingsView(config: config, monitor: pullRequests)
                 }
                 if let error = config.loadError {
                     Section {

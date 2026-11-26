@@ -16,6 +16,7 @@ struct ModulesConfig: Codable, Equatable {
     var week = WeekModuleConfig()
     var music = MusicModuleConfig()
     var claudeCode = ClaudeCodeModuleConfig()
+    var pullRequests = PullRequestsModuleConfig()
 
     init() {}
 
@@ -25,6 +26,7 @@ struct ModulesConfig: Codable, Equatable {
         week = try container.decodeIfPresent(WeekModuleConfig.self, forKey: .week) ?? WeekModuleConfig()
         music = try container.decodeIfPresent(MusicModuleConfig.self, forKey: .music) ?? MusicModuleConfig()
         claudeCode = try container.decodeIfPresent(ClaudeCodeModuleConfig.self, forKey: .claudeCode) ?? ClaudeCodeModuleConfig()
+        pullRequests = try container.decodeIfPresent(PullRequestsModuleConfig.self, forKey: .pullRequests) ?? PullRequestsModuleConfig()
     }
 }
 
@@ -159,5 +161,53 @@ struct ClaudeCodeModuleConfig: Codable, Equatable {
         waiting = try container.decodeIfPresent(Bool.self, forKey: .waiting) ?? true
         finished = try container.decodeIfPresent(Bool.self, forKey: .finished) ?? true
         accountNames = try container.decodeIfPresent([String: String].self, forKey: .accountNames) ?? [:]
+    }
+}
+
+struct PullRequestsModuleConfig: Codable, Equatable {
+    var enabled = true
+    var pollMinutes = 2
+    var includeDrafts = false
+    var includeBots = false
+    var organizations: [String] = []
+    var alerts = PullRequestAlertsConfig()
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        pollMinutes = try container.decodeIfPresent(Int.self, forKey: .pollMinutes) ?? 2
+        includeDrafts = try container.decodeIfPresent(Bool.self, forKey: .includeDrafts) ?? false
+        includeBots = try container.decodeIfPresent(Bool.self, forKey: .includeBots) ?? false
+        organizations = try container.decodeIfPresent([String].self, forKey: .organizations) ?? []
+        alerts = try container.decodeIfPresent(PullRequestAlertsConfig.self, forKey: .alerts) ?? PullRequestAlertsConfig()
+    }
+}
+
+struct PullRequestAlertsConfig: Codable, Equatable {
+    var reviewRequested = true
+    var ciFailed = true
+    var changesRequested = true
+    var approved = true
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        reviewRequested = try container.decodeIfPresent(Bool.self, forKey: .reviewRequested) ?? true
+        ciFailed = try container.decodeIfPresent(Bool.self, forKey: .ciFailed) ?? true
+        changesRequested = try container.decodeIfPresent(Bool.self, forKey: .changesRequested) ?? true
+        approved = try container.decodeIfPresent(Bool.self, forKey: .approved) ?? true
+    }
+
+    func allows(_ state: PRState) -> Bool {
+        switch state {
+        case .reviewRequested: reviewRequested
+        case .ciFailed: ciFailed
+        case .changesRequested: changesRequested
+        case .approved, .readyToMerge: approved
+        case .conflict, .waiting, .draft: false
+        }
     }
 }

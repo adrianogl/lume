@@ -10,7 +10,16 @@ struct AlertPillView: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: AlertLayout.textRefresh)) { timeline in
             HStack(spacing: AlertLayout.spacing) {
-                OwlMascot(width: AlertLayout.mascotWidth, isBlinking: isBlinking)
+                if case .pullRequest(let pr) = alert {
+                    Image(systemName: pr.state.alertSymbol)
+                        .font(.system(size: PRLayout.alertGlyphSize, weight: .bold))
+                        .foregroundStyle(pr.state.color)
+                        .frame(width: PRLayout.alertIconSize, height: PRLayout.alertIconSize)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(pr.state.color.opacity(0.18)))
+                        .frame(width: AlertLayout.mascotWidth)
+                } else {
+                    OwlMascot(width: AlertLayout.mascotWidth, isBlinking: isBlinking)
+                }
 
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
@@ -27,8 +36,8 @@ struct AlertPillView: View {
                                 .background(RoundedRectangle(cornerRadius: 4).fill(claude.tagColor.opacity(0.16)))
                         }
                     }
-                    if case .claude(let claude) = alert, !claude.sessionTitle.isEmpty {
-                        Text(claude.sessionTitle)
+                    if let detailTitle, !detailTitle.isEmpty {
+                        Text(detailTitle)
                             .font(.system(size: AlertLayout.sessionTitleSize, weight: .semibold))
                             .opacity(0.9)
                             .fixedSize(horizontal: false, vertical: true)
@@ -65,6 +74,15 @@ struct AlertPillView: View {
         switch alert {
         case .event(let event): event.event.title
         case .claude(let claude): claude.title
+        case .pullRequest(let pr): pr.state.alertTitle
+        }
+    }
+
+    private var detailTitle: String? {
+        switch alert {
+        case .event: nil
+        case .claude(let claude): claude.sessionTitle
+        case .pullRequest(let pr): pr.pullRequest.title
         }
     }
 
@@ -72,6 +90,7 @@ struct AlertPillView: View {
         switch alert {
         case .event(let event): event.isStart ? AlertText.close : AlertText.later
         case .claude: ClaudeText.later
+        case .pullRequest: PRText.later
         }
     }
 
@@ -83,6 +102,8 @@ struct AlertPillView: View {
         case .claude(let claude):
             guard let bundle = claude.bundleID, !bundle.isEmpty else { return nil }
             return (ClaudeText.open, { ClaudeCodeMonitor.open(bundleID: bundle, terminalSession: claude.terminalSession) })
+        case .pullRequest(let pr):
+            return (PRText.open, { PullRequestMonitor.open(pr.pullRequest) })
         }
     }
 
@@ -90,6 +111,8 @@ struct AlertPillView: View {
         switch alert {
         case .claude(let claude):
             return claude.subtitle
+        case .pullRequest(let pr):
+            return pr.subtitle
         case .event(let event):
             let calendar = Calendar.current
             var parts: [String]

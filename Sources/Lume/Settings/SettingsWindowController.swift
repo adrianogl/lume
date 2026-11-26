@@ -5,11 +5,13 @@ import SwiftUI
 final class SettingsWindowController {
     private let config: ConfigStore
     private let week: WeekEventStore
+    private let pullRequests: PullRequestMonitor
     private var window: NSWindow?
 
-    init(config: ConfigStore, week: WeekEventStore) {
+    init(config: ConfigStore, week: WeekEventStore, pullRequests: PullRequestMonitor) {
         self.config = config
         self.week = week
+        self.pullRequests = pullRequests
     }
 
     func show(on screen: NSScreen?) {
@@ -22,7 +24,7 @@ final class SettingsWindowController {
             )
             window.title = SettingsText.windowTitle
             window.isReleasedWhenClosed = false
-            window.contentView = NSHostingView(rootView: SettingsView(config: config, week: week))
+            window.contentView = NSHostingView(rootView: SettingsView(config: config, week: week, pullRequests: pullRequests))
             self.window = window
         }
         if let window, let visible = screen?.visibleFrame, !window.isVisible {

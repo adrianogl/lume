@@ -6,7 +6,7 @@ enum Metrics {
     static let eyeEarPadding: CGFloat = 7
     static let fallbackNotchWidth: CGFloat = 120
     static let fallbackNotchMinHeight: CGFloat = 30
-    static let maxNotchSize = CGSize(width: 640, height: 220)
+    static let maxNotchSize = CGSize(width: 640, height: 380)
 }
 
 enum NotchCurve {
@@ -283,6 +283,7 @@ enum OwlEyes {
 enum LaunchOptions {
     static let demoAlert = "LUME_DEMO_ALERT"
     static let demoMeeting = "LUME_DEMO_MEETING"
+    static let demoPullRequest = "LUME_DEMO_PR"
 }
 
 enum ClosedLayout {

@@ -23,6 +23,31 @@ enum SettingsText {
     static let claudeInstall = "Instalar hooks"
     static let claudeRemove = "Remover"
     static let claudeInstalled = "Instalado"
+    static let prEnabled = "Mostrar as pull requests"
+    static let prFooter = "Lê as suas PRs abertas e os reviews pedidos a você pelo gh, que precisa estar instalado e logado. O Lume não guarda token."
+    static let prAlertsSection = "Avisar quando"
+    static let prReviewRequested = "Pedirem seu review"
+    static let prCIFailed = "O CI de uma PR sua falhar"
+    static let prChangesRequested = "Pedirem mudanças numa PR sua"
+    static let prApproved = "Uma PR sua for aprovada ou ficar pronta para merge"
+    static let prFilterSection = "O que entra"
+    static let prDrafts = "Incluir rascunhos"
+    static let prBots = "Incluir PRs de bots (dependabot, renovate)"
+    static let prScope = "Organizações ou repositórios"
+    static let prScopePrompt = "org, dono/repo"
+    static let prScopeFooter = "Separe por vírgula. Vazio mostra todas."
+    static let prPoll = "Atualizar a cada"
+    static let prRefresh = "Atualizar agora"
+    static let prLoading = "Buscando…"
+
+    static func pollMinutes(_ minutes: Int) -> String {
+        "\(minutes) min"
+    }
+
+    static func prConnected(_ login: String) -> String {
+        "Conectado como \(login)"
+    }
+
     static let sourceSection = "Fonte"
     static let sourceLabel = "De onde vêm os eventos"
     static let sourceEventKit = "Calendário do macOS"
