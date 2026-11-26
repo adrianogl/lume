@@ -19,6 +19,8 @@ final class NotchModel: ObservableObject {
         withAnimation(NotchMotion.resize) { size = target }
     }
 
+    var isResting: Bool { size == restingSize }
+
     func rest() {
         resize(toFit: restingSize)
     }

@@ -27,12 +27,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let frame = geometry.windowFrame
         let panel = NotchPanel(contentRect: frame)
         panel.ignoresMouseEvents = true
-        let host = NSHostingView(rootView: NotchView(model: model, canvasSize: frame.size))
+        let host = NSHostingView(rootView: NotchView(model: model, canvasSize: frame.size, eyeCenterOffset: eyeCenterOffset(for: geometry)))
         host.frame = NSRect(origin: .zero, size: frame.size)
         panel.contentView = host
         panel.setFrame(frame, display: true)
         panel.orderFrontRegardless()
         self.panel = panel
         self.model = model
+    }
+
+    private func eyeCenterOffset(for geometry: NotchGeometry) -> CGFloat {
+        if geometry.hasPhysicalNotch {
+            return geometry.notchSize.width / 2 + geometry.earWidth / 2
+        }
+        return geometry.notchSize.height * OwlEyes.centeredSpacingRatio / 2
     }
 }
