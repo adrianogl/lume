@@ -222,6 +222,11 @@ enum ConfigFile {
 
 enum WeekModule {
     static let refreshInterval: TimeInterval = 300
+    static let minOffset = -4
+    static let maxOffset = 8
+    static let navButtonSize: CGFloat = 18
+    static let navGlyph: CGFloat = 8
+    static let scrollThreshold: CGFloat = 30
 }
 
 enum WeekLayout {

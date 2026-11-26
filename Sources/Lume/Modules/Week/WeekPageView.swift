@@ -19,20 +19,49 @@ struct WeekPageView: View {
             .animation(.easeOut(duration: 0.2), value: selectedDay)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .onAppear { store.acceptsWeekScroll = selectedDay == nil }
+        .onChange(of: selectedDay) { _, day in store.acceptsWeekScroll = day == nil }
+        .onDisappear {
+            store.acceptsWeekScroll = false
+            store.showWeek(offset: 0)
+        }
     }
 
     private var days: [Date] { store.days(includeWeekend: showWeekend) }
 
     private func overview(now: Date) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text(WeekText.title).font(.system(size: WeekLayout.titleSize, weight: .semibold))
+            HStack(spacing: 4) {
+                Text(WeekText.weekTitle(offset: store.weekOffset)).font(.system(size: WeekLayout.titleSize, weight: .semibold))
                 Spacer(minLength: 0)
+                if store.weekOffset != 0 {
+                    Button { store.showWeek(offset: 0) } label: {
+                        Text(WeekText.backToToday)
+                            .font(.system(size: 9.5, weight: .bold))
+                            .foregroundStyle(NotchRim.amber)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(NotchRim.amber.opacity(0.18)))
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, 2)
+                }
+                WeekNavButton(symbol: "chevron.left", label: WeekText.previousWeek) {
+                    store.showWeek(offset: store.weekOffset - 1)
+                }
+                .disabled(store.weekOffset <= WeekModule.minOffset)
                 Text(WeekText.range(days, calendar: store.calendar))
                     .font(.system(size: WeekLayout.metaSize))
+                    .monospacedDigit()
                     .opacity(WeekLayout.secondaryOpacity)
+                    .padding(.horizontal, 2)
+                WeekNavButton(symbol: "chevron.right", label: WeekText.nextWeek) {
+                    store.showWeek(offset: store.weekOffset + 1)
+                }
+                .disabled(store.weekOffset >= WeekModule.maxOffset)
             }
-            .padding(.top, WeekLayout.headerTop)
+            .padding(.top, WeekLayout.headerTop - 2)
 
             switch store.state {
             case .ready:
@@ -46,8 +75,14 @@ struct WeekPageView: View {
                 }
                 .padding(.top, WeekLayout.stripTop)
 
-                NextEventRow(event: store.nextEvent(after: now), now: now, calendar: store.calendar)
-                    .padding(.top, WeekLayout.nextRowTop)
+                Group {
+                    if store.weekOffset == 0 {
+                        NextEventRow(event: store.nextEvent(after: now), now: now, calendar: store.calendar)
+                    } else {
+                        FirstEventRow(event: store.firstShownEvent, count: store.shownEvents.count, calendar: store.calendar)
+                    }
+                }
+                .padding(.top, WeekLayout.nextRowTop)
             default:
                 StatusMessage(state: store.state)
                     .padding(.top, WeekLayout.stripTop)
@@ -213,6 +248,54 @@ private struct NextEventRow: View {
         .padding(.horizontal, 8)
         .frame(height: WeekLayout.rowHeight)
         .background(RoundedRectangle(cornerRadius: 7).fill(NotchRim.coral.opacity(event == nil ? 0.06 : 0.12)))
+    }
+}
+
+private struct FirstEventRow: View {
+    let event: CalendarEvent?
+    let count: Int
+    let calendar: Calendar
+
+    var body: some View {
+        HStack(spacing: 8) {
+            if let event {
+                RoundedRectangle(cornerRadius: 1.5).fill(event.color).frame(width: 3, height: 12)
+                Text(WeekText.first).opacity(WeekLayout.secondaryOpacity)
+                Text(event.isAllDay ? WeekText.letter(event.start, calendar: calendar, compact: false) : WeekText.dayAndTime(event.start, calendar: calendar))
+                    .fontWeight(.semibold)
+                    .monospacedDigit()
+                Text(event.title).lineLimit(1)
+                Spacer(minLength: 0)
+                Text(WeekText.count(count)).opacity(0.5).lineLimit(1)
+            } else {
+                Text(WeekText.nothingThatWeek).opacity(WeekLayout.secondaryOpacity)
+                Spacer(minLength: 0)
+            }
+        }
+        .font(.system(size: WeekLayout.rowSize))
+        .padding(.horizontal, 8)
+        .frame(height: WeekLayout.rowHeight)
+        .background(RoundedRectangle(cornerRadius: 7).fill(.white.opacity(0.07)))
+    }
+}
+
+private struct WeekNavButton: View {
+    let symbol: String
+    let label: String
+    let action: () -> Void
+    @Environment(\.isEnabled) private var isEnabled
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: WeekModule.navGlyph, weight: .bold))
+                .frame(width: WeekModule.navButtonSize, height: WeekModule.navButtonSize)
+                .background(Circle().fill(.white.opacity(0.12)))
+                .contentShape(Circle())
+                .opacity(isEnabled ? 1 : 0.3)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 }
 

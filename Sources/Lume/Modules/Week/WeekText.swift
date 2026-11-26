@@ -11,6 +11,25 @@ enum WeekText {
     static let denied = "Sem acesso ao Calendário. Libere em Ajustes do Sistema › Privacidade e Segurança › Calendários."
     static let failed = "Não consegui ler o calendário."
     static let backLabel = "Voltar para a semana"
+    static let first = "Primeiro"
+    static let backToToday = "Hoje"
+    static let previousWeek = "Semana anterior"
+    static let nextWeek = "Próxima semana"
+    static let nothingThatWeek = "Nada marcado nesta semana"
+
+    static func weekTitle(offset: Int) -> String {
+        switch offset {
+        case 0: title
+        case 1: "Próxima semana"
+        case -1: "Semana passada"
+        case let value where value > 1: "Em \(value) semanas"
+        default: "Há \(-offset) semanas"
+        }
+    }
+
+    static func dayAndTime(_ date: Date, calendar: Calendar) -> String {
+        letter(date, calendar: calendar, compact: false) + " " + time(date, calendar: calendar)
+    }
 
     static func count(_ count: Int) -> String {
         count == 1 ? "1 evento" : "\(count) eventos"
@@ -32,6 +51,9 @@ enum WeekText {
     static func range(_ days: [Date], calendar: Calendar) -> String {
         guard let first = days.first, let last = days.last else { return "" }
         let end = formatted(last, "d MMM", calendar: calendar).replacingOccurrences(of: ".", with: "")
+        guard calendar.component(.month, from: first) == calendar.component(.month, from: last) else {
+            return formatted(first, "d MMM", calendar: calendar).replacingOccurrences(of: ".", with: "") + " – " + end
+        }
         return "\(calendar.component(.day, from: first)) – \(end)"
     }
 

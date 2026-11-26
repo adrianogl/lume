@@ -126,7 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hover.start()
         self.hover = hover
 
-        let swipe = PageSwipeMonitor(model: model)
+        let swipe = PageSwipeMonitor(model: model, week: week)
         swipe.start()
         self.swipe = swipe
 

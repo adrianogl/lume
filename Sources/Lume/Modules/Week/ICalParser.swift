@@ -8,22 +8,57 @@ enum ICalParser {
         let end: Date
         let isAllDay: Bool
         let linkTexts: [String?]
+        var rule: RecurrenceRule? = nil
+        var exdates: Set<Date> = []
+        var recurrenceID: Date? = nil
+        var timeZone: TimeZone = .current
+    }
+
+    static func occurrences(from text: String, in interval: DateInterval) -> [RawEvent] {
+        let all = events(from: text)
+        let overrides = Set(all.compactMap { event in event.recurrenceID.map { "\(event.uid)|\($0.timeIntervalSince1970)" } })
+        var result: [RawEvent] = []
+        for event in all {
+            guard let rule = event.rule, event.recurrenceID == nil else {
+                if event.end > interval.start, event.start < interval.end { result.append(event) }
+                continue
+            }
+            let duration = event.end.timeIntervalSince(event.start)
+            let starts = ICalRecurrence.starts(of: event.start, rule: rule, timeZone: event.timeZone, until: interval.end)
+            for start in starts where start.addingTimeInterval(duration) > interval.start && start < interval.end {
+                guard !event.exdates.contains(start), !overrides.contains("\(event.uid)|\(start.timeIntervalSince1970)") else { continue }
+                result.append(RawEvent(
+                    uid: event.uid + "|\(Int(start.timeIntervalSince1970))",
+                    summary: event.summary,
+                    start: start,
+                    end: start.addingTimeInterval(duration),
+                    isAllDay: event.isAllDay,
+                    linkTexts: event.linkTexts
+                ))
+            }
+        }
+        return result
     }
 
     static func events(from text: String) -> [RawEvent] {
         var events: [RawEvent] = []
         var fields: [String: (params: [String: String], value: String)] = [:]
+        var exdates: Set<Date> = []
         var inEvent = false
 
         for line in unfold(text) {
             if line == "BEGIN:VEVENT" {
                 inEvent = true
                 fields = [:]
+                exdates = []
                 continue
             }
             if line == "END:VEVENT" {
                 inEvent = false
-                if let event = makeEvent(fields) { events.append(event) }
+                if var event = makeEvent(fields) {
+                    event.exdates = exdates
+                    events.append(event)
+                }
                 continue
             }
             guard inEvent, let colon = line.firstIndex(of: ":") else { continue }
@@ -34,7 +69,14 @@ enum ICalParser {
                 let parts = pair.split(separator: "=", maxSplits: 1).map(String.init)
                 if parts.count == 2 { params[parts[0].uppercased()] = parts[1] }
             }
-            fields[name] = (params, String(line[line.index(after: colon)...]))
+            let value = String(line[line.index(after: colon)...])
+            if name == "EXDATE" {
+                for item in value.split(separator: ",") {
+                    if let date = date(String(item), params: params) { exdates.insert(date) }
+                }
+            } else {
+                fields[name] = (params, value)
+            }
         }
         return events
     }
@@ -57,7 +99,7 @@ enum ICalParser {
         let isAllDay = startField.params["VALUE"] == "DATE" || startField.value.count == 8
         let end = fields["DTEND"].flatMap { date($0.value, params: $0.params) }
             ?? start.addingTimeInterval(isAllDay ? 86_400 : 3_600)
-        return RawEvent(
+        var event = RawEvent(
             uid: fields["UID"]?.value ?? UUID().uuidString,
             summary: unescape(fields["SUMMARY"]?.value ?? ""),
             start: start,
@@ -65,6 +107,10 @@ enum ICalParser {
             isAllDay: isAllDay,
             linkTexts: [fields["URL"]?.value, fields["LOCATION"].map { unescape($0.value) }, fields["DESCRIPTION"].map { unescape($0.value) }]
         )
+        event.timeZone = startField.params["TZID"].flatMap(TimeZone.init(identifier:)) ?? .current
+        event.rule = fields["RRULE"].flatMap { RecurrenceRule($0.value, parseDate: { date($0, params: [:]) }) }
+        event.recurrenceID = fields["RECURRENCE-ID"].flatMap { date($0.value, params: $0.params) }
+        return event
     }
 
     private static func date(_ value: String, params: [String: String]) -> Date? {
