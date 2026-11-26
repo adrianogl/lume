@@ -5,8 +5,22 @@ import SwiftUI
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var panel: NotchPanel?
     private var model: NotchModel?
+    private var screenObserver: Any?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        showNotch()
+        screenObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.showNotch() }
+        }
+    }
+
+    private func showNotch() {
+        panel?.orderOut(nil)
+        panel = nil
         guard let geometry = NotchGeometry.current() else { return }
 
         let model = NotchModel(restingSize: geometry.restingSize)

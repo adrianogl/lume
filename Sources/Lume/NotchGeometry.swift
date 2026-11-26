@@ -6,7 +6,7 @@ struct NotchGeometry {
 
     static func current() -> NotchGeometry? {
         let notched = NSScreen.screens.first { $0.safeAreaInsets.top > 0 }
-        guard let screen = notched ?? NSScreen.main else { return nil }
+        guard let screen = notched ?? NSScreen.screens.first else { return nil }
 
         if let left = screen.auxiliaryTopLeftArea, let right = screen.auxiliaryTopRightArea, screen.safeAreaInsets.top > 0 {
             let width = screen.frame.width - left.width - right.width
