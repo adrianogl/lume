@@ -9,6 +9,7 @@ final class NotchModel: ObservableObject {
     @Published private(set) var pageIndex = 0
     @Published private(set) var alert: EventAlert?
     @Published private(set) var meeting: MeetingStatus?
+    @Published private(set) var isMusicActive = false
     var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
@@ -45,7 +46,8 @@ final class NotchModel: ObservableObject {
     }
 
     func turnPage(forward: Bool) {
-        showPage(pageIndex + (forward ? 1 : -1))
+        guard !pages.isEmpty else { return }
+        showPage((pageIndex + (forward ? 1 : -1) + pages.count) % pages.count)
     }
 
     func resize(toFit content: CGSize) {
@@ -62,7 +64,12 @@ final class NotchModel: ObservableObject {
     }
 
     var baseSize: CGSize {
-        guard let meeting else { return restingSize }
+        guard let meeting else {
+            if isMusicActive, contentTopInset > 0 {
+                return CGSize(width: restingSize.width + MusicLayout.notchEarExtra * 2, height: restingSize.height)
+            }
+            return restingSize
+        }
         let physical = contentTopInset > 0
         if physical {
             let extra = meeting.next == nil ? MeetingLayout.notchEarExtra : MeetingLayout.notchEndingEarExtra
@@ -70,6 +77,14 @@ final class NotchModel: ObservableObject {
         }
         let width = meeting.next == nil ? MeetingLayout.compactWidth : MeetingLayout.endingWidth
         return CGSize(width: max(width, restingSize.width), height: restingSize.height)
+    }
+
+    func setMusicActive(_ active: Bool) {
+        guard active != isMusicActive else { return }
+        withAnimation(NotchMotion.resize) { isMusicActive = active }
+        if !isOpen, alert == nil {
+            rest()
+        }
     }
 
     func setMeeting(_ status: MeetingStatus?) {

@@ -4,6 +4,7 @@ struct NotchView: View {
     @ObservedObject var model: NotchModel
     let config: ConfigStore
     let week: WeekEventStore
+    let music: MusicController
     let canvasSize: CGSize
     let eyeCenterOffset: CGFloat
     @State private var isBlinking = false
@@ -27,12 +28,12 @@ struct NotchView: View {
 
             ZStack(alignment: .topLeading) {
                 if model.isOpen {
-                    OpenNotchContent(model: model, config: config, week: week)
+                    OpenNotchContent(model: model, config: config, week: week, music: music)
                         .transition(.opacity.animation(OpenLayout.contentFade))
 
                     if model.currentPage == .clock {
                         OwlMascot(width: OpenLayout.mascotWidth, isBlinking: isBlinking)
-                            .offset(x: OpenLayout.mascotOrigin.x, y: OpenLayout.mascotOrigin.y)
+                            .offset(x: OpenLayout.mascotOrigin.x + (model.pages.count > 1 ? OpenLayout.arrowInset : 0), y: OpenLayout.mascotOrigin.y)
                             .transition(.scale(scale: OpenLayout.mascotAppearScale, anchor: .topLeading).combined(with: .opacity))
                     }
                 } else if let alert = model.alert {
@@ -42,6 +43,10 @@ struct NotchView: View {
                         .transition(.opacity.animation(OpenLayout.contentFade))
                 } else if let meeting = model.meeting {
                     MeetingStripView(meeting: meeting, isBlinking: isBlinking)
+                        .frame(width: model.size.width, height: model.restingSize.height)
+                        .transition(.opacity)
+                } else if model.isMusicActive {
+                    MusicEarsView(eyeCenterOffset: eyeCenterOffset, eyeSize: eyeSize)
                         .frame(width: model.size.width, height: model.restingSize.height)
                         .transition(.opacity)
                 } else {

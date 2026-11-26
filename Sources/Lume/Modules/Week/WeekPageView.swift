@@ -95,7 +95,8 @@ struct WeekPageView: View {
                         }
                     }
                 }
-                .frame(width: WeekLayout.listWidth, height: WeekLayout.listHeight, alignment: .topLeading)
+                .frame(maxWidth: .infinity, maxHeight: WeekLayout.listHeight, alignment: .topLeading)
+                .frame(height: WeekLayout.listHeight)
 
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(days, id: \.self) { other in

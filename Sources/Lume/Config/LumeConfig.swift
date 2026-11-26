@@ -14,6 +14,7 @@ struct LumeConfig: Codable, Equatable {
 struct ModulesConfig: Codable, Equatable {
     var clock = ClockModuleConfig()
     var week = WeekModuleConfig()
+    var music = MusicModuleConfig()
 
     init() {}
 
@@ -21,6 +22,7 @@ struct ModulesConfig: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         clock = try container.decodeIfPresent(ClockModuleConfig.self, forKey: .clock) ?? ClockModuleConfig()
         week = try container.decodeIfPresent(WeekModuleConfig.self, forKey: .week) ?? WeekModuleConfig()
+        music = try container.decodeIfPresent(MusicModuleConfig.self, forKey: .music) ?? MusicModuleConfig()
     }
 }
 
@@ -123,5 +125,18 @@ enum CalendarSource: Codable, Equatable {
             try container.encode(Kind.ical, forKey: .type)
             try container.encode(url, forKey: .url)
         }
+    }
+}
+
+struct MusicModuleConfig: Codable, Equatable {
+    var enabled = true
+    var showWhilePlaying = true
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        showWhilePlaying = try container.decodeIfPresent(Bool.self, forKey: .showWhilePlaying) ?? true
     }
 }

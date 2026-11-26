@@ -4,6 +4,7 @@ struct OpenNotchContent: View {
     @ObservedObject var model: NotchModel
     @ObservedObject var config: ConfigStore
     @ObservedObject var week: WeekEventStore
+    let music: MusicController
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -13,6 +14,8 @@ struct OpenNotchContent: View {
                     ClockPageView()
                 case .week:
                     WeekPageView(store: week, showWeekend: config.config.modules.week.showWeekend)
+                case .music:
+                    MusicPageView(music: music)
                 case nil:
                     Text(OpenLayout.noModules)
                         .font(.system(size: WeekLayout.rowSize))
@@ -21,6 +24,17 @@ struct OpenNotchContent: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.horizontal, model.pages.count > 1 ? OpenLayout.arrowInset : 0)
+
+            if model.pages.count > 1 {
+                HStack {
+                    PageArrow(symbol: "chevron.left", label: OpenLayout.previousLabel) { model.turnPage(forward: false) }
+                    Spacer(minLength: 0)
+                    PageArrow(symbol: "chevron.right", label: OpenLayout.nextLabel) { model.turnPage(forward: true) }
+                }
+                .padding(.horizontal, OpenLayout.arrowEdge)
+                .frame(maxHeight: .infinity)
+            }
 
             if model.pages.count > 1 {
                 HStack(spacing: OpenLayout.dotSpacing - OpenLayout.dotHitPadding) {
@@ -56,5 +70,23 @@ struct OpenNotchContent: View {
             .padding(.trailing, SettingsLayout.gearInset - 6)
             .padding(.bottom, OpenLayout.dotsBottom - 6)
         }
+    }
+}
+
+private struct PageArrow: View {
+    let symbol: String
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: OpenLayout.arrowGlyph, weight: .bold))
+                .frame(width: OpenLayout.arrowSize, height: OpenLayout.arrowSize)
+                .background(Circle().fill(.white.opacity(OpenLayout.arrowOpacity)))
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 }

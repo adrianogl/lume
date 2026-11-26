@@ -11,6 +11,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var swipe: PageSwipeMonitor?
     private let config = ConfigStore()
     private let week = WeekEventStore()
+    private let music = MusicController()
+    private var musicSubscription: AnyCancellable?
     private lazy var alerts = EventAlertScheduler(store: week) { [weak self] alert in
         self?.model?.present(alert)
     }
@@ -28,6 +30,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         configSubscription = config.$config.sink { [weak self] newConfig in
             self?.apply(newConfig)
         }
+        musicSubscription = music.$isActive.sink { [weak self] active in
+            self?.model?.setMusicActive(active)
+        }
         eventsSubscription = week.$events.dropFirst().sink { [weak self] _ in
             DispatchQueue.main.async { self?.meetings.update() }
         }
@@ -44,6 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         week.apply(newConfig.modules.week)
         alerts.apply(newConfig.modules.week)
         meetings.apply(newConfig.modules.week)
+        music.apply(newConfig.modules.music)
         model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
@@ -71,6 +77,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             model: model,
             config: config,
             week: week,
+            music: music,
             canvasSize: frame.size,
             eyeCenterOffset: eyeCenterOffset(for: geometry)
         )
@@ -82,6 +89,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.panel = panel
         self.model = model
         meetings.update()
+        model.setMusicActive(music.isActive)
 
         let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
         hover.start()

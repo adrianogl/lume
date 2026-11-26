@@ -58,6 +58,13 @@ enum OpenLayout {
     static let mascotAppearScale: CGFloat = 0.6
     static let headerTop: CGFloat = 13
     static let titleLeading: CGFloat = 76
+    static let arrowInset: CGFloat = 18
+    static let arrowEdge: CGFloat = 9
+    static let arrowSize: CGFloat = 22
+    static let arrowGlyph: CGFloat = 9
+    static let arrowOpacity: Double = 0.16
+    static let previousLabel = "Card anterior"
+    static let nextLabel = "Próximo card"
     static let dateTrailing: CGFloat = 22
     static let headerFontSize: CGFloat = 13
     static let clockTop: CGFloat = 40
@@ -133,6 +140,41 @@ enum MeetingText {
     }
 }
 
+enum MusicLayout {
+    static let pauseGrace: Double = 3
+    static let refreshAfterCommand: Double = 0.3
+    static let playerTop: CGFloat = 8
+    static let coverSize: CGFloat = 74
+    static let coverRadius: CGFloat = 12
+    static let coverSpacing: CGFloat = 14
+    static let titleSize: CGFloat = 14
+    static let controlSpacing: CGFloat = 16
+    static let barCount = 4
+    static let barWidth: CGFloat = 2.5
+    static let barGap: CGFloat = 2
+    static let barMaxHeight: CGFloat = 13
+    static let barMinScale: CGFloat = 0.3
+    static let barDurations: [Double] = [0.45, 0.38, 0.52, 0.41]
+    static let barsTrailing: CGFloat = 12
+    static let bobHeight: CGFloat = 1.5
+    static let bobDuration: Double = 0.24
+    static let notchEarExtra: CGFloat = 24
+}
+
+enum MusicText {
+    static let title = "Música"
+    static let nothing = "Nada tocando. Abra o Spotify ou o Música."
+    static let previous = "Faixa anterior"
+    static let next = "Próxima faixa"
+    static let play = "Tocar"
+    static let pause = "Pausar"
+
+    static func time(_ seconds: TimeInterval) -> String {
+        let total = Int(seconds.rounded(.down))
+        return "\(total / 60):" + String(format: "%02d", total % 60)
+    }
+}
+
 enum AlertSound {
     static let defaultName = "Glass"
     static let choices = ["Glass", "Ping", "Pop", "Purr", "Tink", "Hero"]
@@ -195,9 +237,8 @@ enum WeekLayout {
     static let detailSpacing: CGFloat = 14
     static let detailHeaderTop: CGFloat = 11
     static let detailHeaderGap: CGFloat = 8
-    static let listWidth: CGFloat = 196
     static let listHeight: CGFloat = 78
-    static let miniWidth: CGFloat = 166
+    static let miniWidth: CGFloat = 150
     static let miniVerticalPadding: CGFloat = 4
     static let verticalDotsHeight: CGFloat = dot * CGFloat(maxDots) + 2 * CGFloat(maxDots - 1)
     static let cardOpacity: Double = 0.06

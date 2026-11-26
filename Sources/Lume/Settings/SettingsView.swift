@@ -29,6 +29,7 @@ struct SettingsView: View {
                 switch selection {
                 case .clock: clockSettings
                 case .week: weekSettings
+                case .music: musicSettings
                 }
                 if let error = config.loadError {
                     Section {
@@ -49,6 +50,16 @@ struct SettingsView: View {
             Toggle(SettingsText.clockEnabled, isOn: binding(\.modules.clock.enabled))
         } footer: {
             Text(SettingsText.clockFooter).frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var musicSettings: some View {
+        Section {
+            Toggle(SettingsText.musicEnabled, isOn: binding(\.modules.music.enabled))
+            Toggle(SettingsText.musicWhilePlaying, isOn: binding(\.modules.music.showWhilePlaying))
+                .disabled(!config.config.modules.music.enabled)
+        } footer: {
+            Text(SettingsText.musicFooter).frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
