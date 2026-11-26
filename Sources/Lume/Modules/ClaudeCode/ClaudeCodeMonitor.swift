@@ -36,8 +36,10 @@ final class ClaudeCodeMonitor: ObservableObject {
 
     static func open(bundleID: String?) {
         guard let bundleID, !bundleID.isEmpty,
-              let app = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).first else { return }
-        app.activate()
+              let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) else { return }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        NSWorkspace.shared.openApplication(at: url, configuration: configuration)
     }
 
     private func handle(_ info: [String: String]) {

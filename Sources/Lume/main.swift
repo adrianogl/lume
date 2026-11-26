@@ -1,7 +1,9 @@
 import AppKit
 
-if CommandLine.arguments.count > 1, CommandLine.arguments[1] == ClaudeHook.command {
-    ClaudeHookCLI.run(Array(CommandLine.arguments.dropFirst(2)))
+if CommandLine.arguments.count > 1, !CommandLine.arguments[1].hasPrefix("-") {
+    if CommandLine.arguments[1] == ClaudeHook.command {
+        ClaudeHookCLI.run(Array(CommandLine.arguments.dropFirst(2)))
+    }
     exit(0)
 }
 

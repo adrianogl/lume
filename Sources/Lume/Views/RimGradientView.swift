@@ -2,24 +2,17 @@ import AppKit
 import SwiftUI
 
 struct RimGradientView: NSViewRepresentable {
-    let topRadius: CGFloat
-    let bottomRadius: CGFloat
-
     func makeNSView(context: Context) -> RimGradientNSView {
         RimGradientNSView()
     }
 
-    func updateNSView(_ view: RimGradientNSView, context: Context) {
-        view.update(topRadius: topRadius, bottomRadius: bottomRadius)
-    }
+    func updateNSView(_ view: RimGradientNSView, context: Context) {}
 }
 
 final class RimGradientNSView: NSView {
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
     private let gradient = CAGradientLayer()
-    private let fade = CAGradientLayer()
-    private let shape = CAShapeLayer()
-    private var topRadius: CGFloat = 0
-    private var bottomRadius: CGFloat = 0
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -29,14 +22,7 @@ final class RimGradientNSView: NSView {
         gradient.startPoint = CGPoint(x: -1, y: 0.5)
         gradient.endPoint = CGPoint(x: 1, y: 0.5)
 
-        fade.colors = [NSColor.clear.cgColor, NSColor.black.cgColor]
-        fade.locations = [NSNumber(value: Double(NotchRim.fadeStart)), NSNumber(value: Double(NotchRim.fadeEnd))]
-        fade.startPoint = CGPoint(x: 0.5, y: 1)
-        fade.endPoint = CGPoint(x: 0.5, y: 0)
-        gradient.mask = fade
-
         layer?.addSublayer(gradient)
-        layer?.mask = shape
         startFlowing()
     }
 
@@ -44,24 +30,11 @@ final class RimGradientNSView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func update(topRadius: CGFloat, bottomRadius: CGFloat) {
-        self.topRadius = topRadius
-        self.bottomRadius = bottomRadius
-        needsLayout = true
-    }
-
     override func layout() {
         super.layout()
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         gradient.frame = bounds
-        fade.frame = bounds
-        shape.frame = bounds
-        let flipToLayerSpace = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -bounds.height)
-        shape.path = NotchShape(topRadius: topRadius, bottomRadius: bottomRadius)
-            .path(in: bounds)
-            .applying(flipToLayerSpace)
-            .cgPath
         CATransaction.commit()
     }
 

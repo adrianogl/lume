@@ -17,6 +17,8 @@ struct EyesLayerView: NSViewRepresentable {
 }
 
 final class EyesLayerNSView: NSView {
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
     private let container = CALayer()
     private let eyes = [CAShapeLayer(), CAShapeLayer()]
     private var eyeSize: CGSize = .zero

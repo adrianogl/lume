@@ -82,6 +82,11 @@ enum OpenLayout {
     static let dateFormat = "EEE, d MMM"
     static let secondaryOpacity: Double = 0.6
     static let contentFade = Animation.easeOut(duration: 0.25).delay(0.1)
+    static let contentExit = Animation.easeOut(duration: 0.08)
+    static let contentTransition = AnyTransition.asymmetric(
+        insertion: .opacity.animation(contentFade),
+        removal: .opacity.animation(contentExit)
+    )
 }
 
 enum MeetingLinkPattern {

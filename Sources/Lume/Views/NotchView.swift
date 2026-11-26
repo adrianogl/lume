@@ -15,8 +15,20 @@ struct NotchView: View {
         let flare = NotchCurve.flare(forHeight: model.size.height)
         let radius = NotchCurve.cornerRadius(forHeight: model.size.height)
         ZStack(alignment: .top) {
-            RimGradientView(topRadius: flare, bottomRadius: radius)
-                .frame(width: model.size.width + flare * 2, height: model.size.height)
+            RimGradientView()
+                .frame(width: canvasSize.width, height: canvasSize.height)
+                .mask(alignment: .top) {
+                    NotchShape(topRadius: flare, bottomRadius: radius)
+                        .fill(LinearGradient(
+                            stops: [
+                                .init(color: .clear, location: NotchRim.fadeStart),
+                                .init(color: .black, location: NotchRim.fadeEnd)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ))
+                        .frame(width: model.size.width + flare * 2, height: model.size.height)
+                }
 
             NotchShape(topRadius: flare, bottomRadius: max(radius - NotchRim.bottomThickness, 0))
                 .fill(.black)
@@ -28,7 +40,7 @@ struct NotchView: View {
             ZStack(alignment: .topLeading) {
                 if model.isOpen {
                     OpenNotchContent(model: model, config: config, week: week, music: music)
-                        .transition(.opacity.animation(OpenLayout.contentFade))
+                        .transition(OpenLayout.contentTransition)
 
                     if model.currentPage == .clock {
                         OwlMascot(width: OpenLayout.mascotWidth, isBlinking: isBlinking)
@@ -39,7 +51,7 @@ struct NotchView: View {
                     AlertPillView(alert: alert, isBlinking: isBlinking, dismiss: model.dismissAlert, onContentHeight: model.fitAlert)
                         .padding(.top, model.contentTopInset)
                         .frame(width: model.size.width, height: model.size.height)
-                        .transition(.opacity.animation(OpenLayout.contentFade))
+                        .transition(OpenLayout.contentTransition)
                 } else {
                     ClosedStatusView(
                         meeting: model.meeting,

@@ -10,6 +10,8 @@ struct BarsLayerView: NSViewRepresentable {
 }
 
 final class BarsLayerNSView: NSView {
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
     private var bars: [CALayer] = []
 
     override init(frame: NSRect) {
