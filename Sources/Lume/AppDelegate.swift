@@ -25,6 +25,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self?.model?.present(.pullRequest(alert))
     }
     private var pullRequestSubscription: AnyCancellable?
+    private lazy var usage = ClaudeUsageMonitor { [weak self] alert in
+        self?.model?.present(.usage(alert))
+    }
+    private var usageSubscription: AnyCancellable?
     private lazy var meetings = MeetingTracker(store: week) { [weak self] status in
         guard ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] == nil else { return }
         self?.model?.setMeeting(status)
@@ -44,6 +48,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         pullRequestSubscription = pullRequests.$attentionCount.sink { [weak self] count in
             self?.model?.setPullRequestCount(count)
+        }
+        usageSubscription = usage.$closedPercent.sink { [weak self] percent in
+            self?.model?.setUsagePercent(percent)
         }
         musicSubscription = music.$isActive.sink { [weak self] active in
             self?.model?.setMusicActive(active)
@@ -67,6 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         music.apply(newConfig.modules.music)
         claude.apply(newConfig.modules.claudeCode)
         pullRequests.apply(newConfig.modules.pullRequests)
+        usage.apply(newConfig.modules.claudeUsage, accountNames: newConfig.modules.claudeCode.accountNames)
         model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
@@ -97,6 +105,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             music: music,
             claude: claude,
             pullRequests: pullRequests,
+            usage: usage,
             canvasSize: frame.size,
             eyeCenterOffset: eyeCenterOffset(for: geometry)
         )
@@ -111,6 +120,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         model.setMusicActive(music.isActive)
         model.setClaudeWaiting(claude.pendingCount > 0)
         model.setPullRequestCount(pullRequests.attentionCount)
+        model.setUsagePercent(usage.closedPercent)
 
         let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
         hover.start()

@@ -1,7 +1,7 @@
 import Foundation
 
 enum NotchPage: String, CaseIterable {
-    case clock, week, music, claudeCode, pullRequests
+    case clock, week, music, claudeCode, claudeUsage, pullRequests
 
     var title: String {
         switch self {
@@ -9,6 +9,7 @@ enum NotchPage: String, CaseIterable {
         case .week: "Semana"
         case .music: "Música"
         case .claudeCode: "Claude Code"
+        case .claudeUsage: UsageText.title
         case .pullRequests: PRText.title
         }
     }
@@ -19,6 +20,7 @@ enum NotchPage: String, CaseIterable {
         case .week: "calendar"
         case .music: "music.note"
         case .claudeCode: "terminal"
+        case .claudeUsage: UsageLayout.symbol
         case .pullRequests: PRLayout.symbol
         }
     }
@@ -26,6 +28,7 @@ enum NotchPage: String, CaseIterable {
     var openSize: CGSize {
         switch self {
         case .claudeCode: ClaudeCard.openSize
+        case .claudeUsage: UsageLayout.openSize
         case .pullRequests: PRLayout.openSize
         default: NotchHover.openSize
         }
@@ -38,6 +41,7 @@ enum NotchPage: String, CaseIterable {
             case .week: config.modules.week.enabled
             case .music: config.modules.music.enabled
             case .claudeCode: config.modules.claudeCode.enabled
+            case .claudeUsage: config.modules.claudeUsage.enabled
             case .pullRequests: config.modules.pullRequests.enabled
             }
         }

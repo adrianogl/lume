@@ -7,6 +7,7 @@ struct OpenNotchContent: View {
     let music: MusicController
     let claude: ClaudeCodeMonitor
     let pullRequests: PullRequestMonitor
+    let usage: ClaudeUsageMonitor
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -20,6 +21,8 @@ struct OpenNotchContent: View {
                     MusicPageView(music: music)
                 case .claudeCode:
                     ClaudeCardView(monitor: claude)
+                case .claudeUsage:
+                    ClaudeUsageCardView(monitor: usage)
                 case .pullRequests:
                     PullRequestCardView(monitor: pullRequests)
                 case nil:

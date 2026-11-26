@@ -33,6 +33,7 @@ struct SettingsView: View {
                 case .week: weekSettings
                 case .music: musicSettings
                 case .claudeCode: ClaudeCodeSettingsView(config: config)
+                case .claudeUsage: ClaudeUsageSettingsView(config: config)
                 case .pullRequests: PullRequestSettingsView(config: config, monitor: pullRequests)
                 }
                 if let error = config.loadError {

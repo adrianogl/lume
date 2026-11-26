@@ -290,7 +290,7 @@ enum ClosedLayout {
     static let edgePadding: CGFloat = 12
     static let iconGap: CGFloat = 7
     static let iconSlot: CGFloat = 20
-    static let twoIconsExtra: CGFloat = 14
+    static let restingIconRoom: CGFloat = 28
     static let eyeGlowRadius: CGFloat = 1.5
     static let amberEye = NSColor(red: 1, green: 214 / 255, blue: 168 / 255, alpha: 1)
     static let amberGlow = NSColor(red: 1, green: 150 / 255, blue: 70 / 255, alpha: 1)

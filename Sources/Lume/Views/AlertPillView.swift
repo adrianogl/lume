@@ -10,7 +10,14 @@ struct AlertPillView: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: AlertLayout.textRefresh)) { timeline in
             HStack(spacing: AlertLayout.spacing) {
-                if case .pullRequest(let pr) = alert {
+                if case .usage(let usage) = alert {
+                    Image(systemName: UsageLayout.symbol)
+                        .font(.system(size: UsageLayout.alertGlyphSize, weight: .bold))
+                        .foregroundStyle(usage.color)
+                        .frame(width: UsageLayout.alertIconSize, height: UsageLayout.alertIconSize)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(usage.color.opacity(0.18)))
+                        .frame(width: AlertLayout.mascotWidth)
+                } else if case .pullRequest(let pr) = alert {
                     Image(systemName: pr.state.alertSymbol)
                         .font(.system(size: PRLayout.alertGlyphSize, weight: .bold))
                         .foregroundStyle(pr.state.color)
@@ -75,6 +82,7 @@ struct AlertPillView: View {
         case .event(let event): event.event.title
         case .claude(let claude): claude.title
         case .pullRequest(let pr): pr.state.alertTitle
+        case .usage(let usage): UsageText.alertTitle(account: usage.account, threshold: usage.threshold, window: usage.window)
         }
     }
 
@@ -83,6 +91,7 @@ struct AlertPillView: View {
         case .event: nil
         case .claude(let claude): claude.sessionTitle
         case .pullRequest(let pr): pr.pullRequest.title
+        case .usage: nil
         }
     }
 
@@ -91,6 +100,7 @@ struct AlertPillView: View {
         case .event(let event): event.isStart ? AlertText.close : AlertText.later
         case .claude: ClaudeText.later
         case .pullRequest: PRText.later
+        case .usage: UsageText.close
         }
     }
 
@@ -104,6 +114,8 @@ struct AlertPillView: View {
             return (ClaudeText.open, { ClaudeCodeMonitor.open(bundleID: bundle, terminalSession: claude.terminalSession) })
         case .pullRequest(let pr):
             return (PRText.open, { PullRequestMonitor.open(pr.pullRequest) })
+        case .usage:
+            return nil
         }
     }
 
@@ -113,6 +125,8 @@ struct AlertPillView: View {
             return claude.subtitle
         case .pullRequest(let pr):
             return pr.subtitle
+        case .usage(let usage):
+            return UsageText.alertSubtitle(resetsAt: usage.resetsAt, now: now)
         case .event(let event):
             let calendar = Calendar.current
             var parts: [String]

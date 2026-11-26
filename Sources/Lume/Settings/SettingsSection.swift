@@ -1,7 +1,7 @@
 import Foundation
 
 enum SettingsSection: String, CaseIterable, Identifiable {
-    case clock, week, music, claudeCode, pullRequests
+    case clock, week, music, claudeCode, claudeUsage, pullRequests
 
     var id: String { rawValue }
 
@@ -11,6 +11,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .week: NotchPage.week.title
         case .music: NotchPage.music.title
         case .claudeCode: SettingsText.claudeTitle
+        case .claudeUsage: NotchPage.claudeUsage.title
         case .pullRequests: NotchPage.pullRequests.title
         }
     }
@@ -21,6 +22,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .week: NotchPage.week.symbol
         case .music: NotchPage.music.symbol
         case .claudeCode: "terminal"
+        case .claudeUsage: NotchPage.claudeUsage.symbol
         case .pullRequests: NotchPage.pullRequests.symbol
         }
     }
@@ -31,6 +33,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .week: config.modules.week.enabled
         case .music: config.modules.music.enabled
         case .claudeCode: config.modules.claudeCode.enabled
+        case .claudeUsage: config.modules.claudeUsage.enabled
         case .pullRequests: config.modules.pullRequests.enabled
         }
     }

@@ -23,6 +23,18 @@ enum SettingsText {
     static let claudeInstall = "Instalar hooks"
     static let claudeRemove = "Remover"
     static let claudeInstalled = "Instalado"
+    static let usageEnabled = "Mostrar o uso do Claude"
+    static let usageFooter = "Usa os números de uso que o Claude Code manda para a status line. O Lume se coloca na frente da sua status line, guarda os números e repassa tudo para o comando que já existe, então o terminal continua igual."
+    static let usageClosed = "Mostrar o percentual no notch fechado"
+    static let usageAlertsSection = "Avisar quando passar de"
+    static let usageAlertsFooter = "O percentual aparece no notch fechado a partir do menor marco escolhido."
+    static let usageAccountsSection = "Status line das contas"
+    static let usageAccountsFooter = "Instalar mexe só no statusLine do settings.json da conta. Remover devolve o comando original. Uma cópia do arquivo fica ao lado, com a extensão .lume-backup."
+
+    static func percent(_ value: Int) -> String {
+        "\(value)%"
+    }
+
     static let prEnabled = "Mostrar as pull requests"
     static let prFooter = "Lê as suas PRs abertas e os reviews pedidos a você pelo gh, que precisa estar instalado e logado. O Lume não guarda token."
     static let prAlertsSection = "Avisar quando"

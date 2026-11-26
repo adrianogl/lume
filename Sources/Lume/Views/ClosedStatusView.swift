@@ -5,6 +5,7 @@ struct ClosedStatusView: View {
     let isMusicPlaying: Bool
     let isClaudeWaiting: Bool
     let pullRequestCount: Int
+    let usagePercent: Int?
     let eyeSize: CGSize
     let eyeCenterOffset: CGFloat
 
@@ -80,6 +81,18 @@ struct ClosedStatusView: View {
                 .foregroundStyle(NotchRim.amber)
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(PRText.attentionLabel)
+            }
+            if let usagePercent {
+                HStack(spacing: 2) {
+                    Image(systemName: UsageLayout.symbol)
+                        .font(.system(size: UsageLayout.symbolSize - 1, weight: .semibold))
+                    Text(UsageText.percent(usagePercent))
+                        .font(.system(size: UsageLayout.percentSize, weight: .bold))
+                        .monospacedDigit()
+                }
+                .foregroundStyle(usagePercent >= UsageLayout.hotLimit ? NotchRim.coral : NotchRim.amber)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(UsageText.closedLabel)
             }
         }
     }

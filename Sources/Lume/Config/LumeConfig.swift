@@ -17,6 +17,7 @@ struct ModulesConfig: Codable, Equatable {
     var music = MusicModuleConfig()
     var claudeCode = ClaudeCodeModuleConfig()
     var pullRequests = PullRequestsModuleConfig()
+    var claudeUsage = ClaudeUsageModuleConfig()
 
     init() {}
 
@@ -27,6 +28,7 @@ struct ModulesConfig: Codable, Equatable {
         music = try container.decodeIfPresent(MusicModuleConfig.self, forKey: .music) ?? MusicModuleConfig()
         claudeCode = try container.decodeIfPresent(ClaudeCodeModuleConfig.self, forKey: .claudeCode) ?? ClaudeCodeModuleConfig()
         pullRequests = try container.decodeIfPresent(PullRequestsModuleConfig.self, forKey: .pullRequests) ?? PullRequestsModuleConfig()
+        claudeUsage = try container.decodeIfPresent(ClaudeUsageModuleConfig.self, forKey: .claudeUsage) ?? ClaudeUsageModuleConfig()
     }
 }
 
@@ -209,5 +211,20 @@ struct PullRequestAlertsConfig: Codable, Equatable {
         case .approved, .readyToMerge: approved
         case .conflict, .waiting, .draft: false
         }
+    }
+}
+
+struct ClaudeUsageModuleConfig: Codable, Equatable {
+    var enabled = true
+    var showWhenClosed = true
+    var alertThresholds = [80, 95]
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        showWhenClosed = try container.decodeIfPresent(Bool.self, forKey: .showWhenClosed) ?? true
+        alertThresholds = try container.decodeIfPresent([Int].self, forKey: .alertThresholds) ?? [80, 95]
     }
 }

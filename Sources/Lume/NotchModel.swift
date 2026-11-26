@@ -12,6 +12,7 @@ final class NotchModel: ObservableObject {
     @Published private(set) var isMusicActive = false
     @Published private(set) var isClaudeWaiting = false
     @Published private(set) var pullRequestCount = 0
+    @Published private(set) var usagePercent: Int?
     var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
@@ -75,8 +76,9 @@ final class NotchModel: ObservableObject {
 
     var baseSize: CGSize {
         let hasPullRequests = pullRequestCount > 0
-        let icons = (isMusicActive ? 1 : 0) + (isClaudeWaiting ? 1 : 0) + (hasPullRequests ? 1 : 0)
-        let countExtra = hasPullRequests ? PRLayout.countWidth : 0
+        let hasUsage = usagePercent != nil
+        let icons = (isMusicActive ? 1 : 0) + (isClaudeWaiting ? 1 : 0) + (hasPullRequests ? 1 : 0) + (hasUsage ? 1 : 0)
+        let countExtra = (hasPullRequests ? PRLayout.countWidth : 0) + (hasUsage ? UsageLayout.percentWidth : 0)
         let iconExtra = CGFloat(icons) * ClosedLayout.iconSlot + countExtra
         if contentTopInset > 0 {
             var extra = iconExtra
@@ -89,8 +91,18 @@ final class NotchModel: ObservableObject {
             let width = (meeting.next == nil ? MeetingLayout.compactWidth : MeetingLayout.endingWidth) + iconExtra
             return CGSize(width: max(width, restingSize.width), height: restingSize.height)
         }
-        let extra = CGFloat(max(icons - 1, 0)) * ClosedLayout.twoIconsExtra + countExtra
+        let extra = max(closedIconsWidth - ClosedLayout.restingIconRoom, 0) * 2
         return CGSize(width: restingSize.width + extra, height: restingSize.height)
+    }
+
+    private var closedIconsWidth: CGFloat {
+        var widths: [CGFloat] = []
+        if isMusicActive { widths.append(BarsLayerNSView.width) }
+        if isClaudeWaiting { widths.append(ClaudeLayout.markSize) }
+        if pullRequestCount > 0 { widths.append(PRLayout.symbolSize + 2 + PRLayout.countWidth) }
+        if usagePercent != nil { widths.append(UsageLayout.symbolSize + 2 + UsageLayout.percentWidth) }
+        guard !widths.isEmpty else { return 0 }
+        return widths.reduce(0, +) + CGFloat(widths.count - 1) * ClosedLayout.iconGap
     }
 
     func setClaudeWaiting(_ waiting: Bool) {
@@ -104,6 +116,14 @@ final class NotchModel: ObservableObject {
     func setPullRequestCount(_ count: Int) {
         guard count != pullRequestCount else { return }
         withAnimation(NotchMotion.resize) { pullRequestCount = count }
+        if !isOpen, alert == nil {
+            rest()
+        }
+    }
+
+    func setUsagePercent(_ percent: Int?) {
+        guard percent != usagePercent else { return }
+        withAnimation(NotchMotion.resize) { usagePercent = percent }
         if !isOpen, alert == nil {
             rest()
         }

@@ -51,11 +51,21 @@ enum ClaudeHookInstaller {
     }
 
     private static func settings(of account: ClaudeAccount) -> [String: Any]? {
+        ClaudeSettingsFile.read(account)
+    }
+
+    private static func write(_ root: [String: Any], to account: ClaudeAccount) throws {
+        try ClaudeSettingsFile.write(root, to: account)
+    }
+}
+
+enum ClaudeSettingsFile {
+    static func read(_ account: ClaudeAccount) -> [String: Any]? {
         guard let data = try? Data(contentsOf: account.settingsFile) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
     }
 
-    private static func write(_ root: [String: Any], to account: ClaudeAccount) throws {
+    static func write(_ root: [String: Any], to account: ClaudeAccount) throws {
         let file = account.settingsFile
         let backup = file.appendingPathExtension(ClaudeHook.backupExtension)
         if FileManager.default.fileExists(atPath: file.path), !FileManager.default.fileExists(atPath: backup.path) {

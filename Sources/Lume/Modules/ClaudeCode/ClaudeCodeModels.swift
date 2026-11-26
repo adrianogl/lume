@@ -73,12 +73,14 @@ enum NotchAlert: Identifiable, Equatable {
     case event(EventAlert)
     case claude(ClaudeAlert)
     case pullRequest(PRAlert)
+    case usage(UsageAlert)
 
     var id: String {
         switch self {
         case .event(let alert): alert.id
         case .claude(let alert): alert.id.uuidString
         case .pullRequest(let alert): alert.id.uuidString
+        case .usage(let alert): alert.id.uuidString
         }
     }
 }
