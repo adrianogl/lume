@@ -65,11 +65,64 @@ enum OpenLayout {
     static let dotsBottom: CGFloat = 12
     static let dotSize: CGFloat = 4
     static let activeDotWidth: CGFloat = 15
+    static let dotSpacing: CGFloat = 4.5
+    static let dotHitPadding: CGFloat = 6
+    static let inactiveDotOpacity: Double = 0.4
     static let title = "Lume"
+    static let noModules = "Nenhum módulo ligado. Use a engrenagem para ligar."
     static let localeID = "pt_BR"
     static let dateFormat = "EEE, d MMM"
     static let secondaryOpacity: Double = 0.6
     static let contentFade = Animation.easeOut(duration: 0.25).delay(0.1)
+}
+
+enum SettingsLayout {
+    static let size = CGSize(width: 640, height: 480)
+    static let sidebarWidth: CGFloat = 180
+    static let gearSize: CGFloat = 12
+    static let gearInset: CGFloat = 18
+}
+
+enum PageSwipe {
+    static let threshold: CGFloat = 40
+    static let idleReset: TimeInterval = 0.4
+}
+
+enum ConfigFile {
+    static let directory = ".config/lume"
+    static let name = "config.json"
+}
+
+enum WeekModule {
+    static let refreshInterval: TimeInterval = 300
+}
+
+enum WeekLayout {
+    static let horizontalPadding: CGFloat = 22
+    static let headerTop: CGFloat = 12
+    static let stripTop: CGFloat = 6
+    static let nextRowTop: CGFloat = 6
+    static let titleSize: CGFloat = 12.5
+    static let metaSize: CGFloat = 12
+    static let rowSize: CGFloat = 11.5
+    static let rowHeight: CGFloat = 22
+    static let rowSpacing: CGFloat = 6
+    static let secondaryOpacity: Double = 0.55
+    static let circle: CGFloat = 22
+    static let miniCircle: CGFloat = 20
+    static let miniLetterSize: CGFloat = 8.5
+    static let miniNumberSize: CGFloat = 10.5
+    static let dot: CGFloat = 4
+    static let maxDots = 3
+    static let detailSpacing: CGFloat = 14
+    static let detailHeaderTop: CGFloat = 11
+    static let detailHeaderGap: CGFloat = 8
+    static let listWidth: CGFloat = 196
+    static let listHeight: CGFloat = 78
+    static let miniWidth: CGFloat = 166
+    static let miniVerticalPadding: CGFloat = 4
+    static let verticalDotsHeight: CGFloat = dot * CGFloat(maxDots) + 2 * CGFloat(maxDots - 1)
+    static let cardOpacity: Double = 0.06
 }
 
 enum NotchRim {

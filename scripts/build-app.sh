@@ -18,7 +18,8 @@ xcrun actool Resources/AppIcon.icon \
   --minimum-deployment-target 14.0 \
   --output-partial-info-plist "$(mktemp)" \
   > /dev/null
-codesign --force --sign - "$APP"
+SIGNING_IDENTITY="${LUME_SIGNING_IDENTITY:-$(security find-identity -v -p codesigning 2>/dev/null | awk -F'"' '/Apple Development/ { print $2; exit }')}"
+codesign --force --sign "${SIGNING_IDENTITY:--}" "$APP"
 
 echo "$APP"
 

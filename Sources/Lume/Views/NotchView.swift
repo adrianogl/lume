@@ -2,6 +2,8 @@ import SwiftUI
 
 struct NotchView: View {
     @ObservedObject var model: NotchModel
+    let config: ConfigStore
+    let week: WeekEventStore
     let canvasSize: CGSize
     let eyeCenterOffset: CGFloat
     @State private var isBlinking = false
@@ -25,12 +27,14 @@ struct NotchView: View {
 
             ZStack(alignment: .topLeading) {
                 if model.isOpen {
-                    OpenNotchContent()
+                    OpenNotchContent(model: model, config: config, week: week)
                         .transition(.opacity.animation(OpenLayout.contentFade))
 
-                    OwlMascot(width: OpenLayout.mascotWidth, isBlinking: isBlinking)
-                        .offset(x: OpenLayout.mascotOrigin.x, y: OpenLayout.mascotOrigin.y)
-                        .transition(.scale(scale: OpenLayout.mascotAppearScale, anchor: .topLeading).combined(with: .opacity))
+                    if model.currentPage == .clock {
+                        OwlMascot(width: OpenLayout.mascotWidth, isBlinking: isBlinking)
+                            .offset(x: OpenLayout.mascotOrigin.x, y: OpenLayout.mascotOrigin.y)
+                            .transition(.scale(scale: OpenLayout.mascotAppearScale, anchor: .topLeading).combined(with: .opacity))
+                    }
                 } else {
                     HStack(spacing: eyeCenterOffset * 2 - eyeSize.width) {
                         OwlEye(size: eyeSize, isBlinking: isBlinking)

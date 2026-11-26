@@ -4,7 +4,29 @@ import SwiftUI
 final class NotchModel: ObservableObject {
     @Published private(set) var size: CGSize
     @Published private(set) var isOpen = false
+    @Published private(set) var pages: [NotchPage] = []
+    @Published private(set) var pageIndex = 0
     let restingSize: CGSize
+    var openSettings: () -> Void = {}
+
+    var currentPage: NotchPage? {
+        pages.indices.contains(pageIndex) ? pages[pageIndex] : nil
+    }
+
+    func setPages(_ newPages: [NotchPage]) {
+        let current = currentPage
+        pages = newPages
+        pageIndex = current.flatMap { newPages.firstIndex(of: $0) } ?? 0
+    }
+
+    func showPage(_ index: Int) {
+        guard pages.indices.contains(index) else { return }
+        withAnimation(.easeOut(duration: 0.2)) { pageIndex = index }
+    }
+
+    func turnPage(forward: Bool) {
+        showPage(pageIndex + (forward ? 1 : -1))
+    }
     private var hoverTask: Task<Void, Never>?
 
     init(restingSize: CGSize) {

@@ -1,0 +1,26 @@
+import Foundation
+
+enum SettingsText {
+    static let windowTitle = "Ajustes do Lume"
+    static let openSettings = "Abrir ajustes"
+    static let clockEnabled = "Mostrar o relógio"
+    static let clockFooter = "Página com a hora e a data quando o notch abre."
+    static let weekEnabled = "Mostrar a semana"
+    static let weekFooter = "Seus eventos da semana como página do notch. Clique num dia para ver os eventos dele."
+    static let sourceSection = "Fonte"
+    static let sourceLabel = "De onde vêm os eventos"
+    static let sourceEventKit = "Calendário do macOS"
+    static let sourceICal = "Link iCal"
+    static let icalLabel = "Link iCal"
+    static let icalPrompt = "https://…/basic.ics"
+    static let icalPending = "Cole o link e tecle Enter para salvar."
+    static let calendarsSection = "Calendários"
+    static let calendarsFooter = "Com todos marcados, calendários novos também aparecem."
+    static let noCalendars = "Nenhum calendário encontrado. Confira o acesso em Ajustes do Sistema › Privacidade e Segurança › Calendários."
+    static let displaySection = "Exibição"
+    static let weekStartLabel = "Semana começa"
+    static let monday = "Segunda"
+    static let sunday = "Domingo"
+    static let showWeekend = "Mostrar fim de semana"
+    static let configError = "Não consegui ler o config.json:"
+}
