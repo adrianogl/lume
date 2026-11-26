@@ -1,0 +1,53 @@
+{
+  "modules": {
+    "clock": {
+      "enabled": true
+    },
+    "week": {
+      "enabled": true,
+      "source": { "type": "eventkit" },
+      "calendars": [],
+      "weekStartsOn": "monday",
+      "showWeekend": true,
+      "alerts": {
+        "minutesBefore": [5],
+        "atStart": true,
+        "shake": true,
+        "sound": "Glass"
+      },
+      "duringEvent": {
+        "enabled": true,
+        "endingMinutes": 5
+      }
+    },
+    "music": {
+      "enabled": true,
+      "showWhilePlaying": true
+    },
+    "claudeCode": {
+      "enabled": true,
+      "permission": true,
+      "waiting": true,
+      "finished": true,
+      "accountNames": {}
+    },
+    "claudeUsage": {
+      "enabled": true,
+      "showWhenClosed": true,
+      "alertThresholds": [80, 95]
+    },
+    "pullRequests": {
+      "enabled": true,
+      "pollMinutes": 2,
+      "includeDrafts": false,
+      "includeBots": false,
+      "organizations": [],
+      "alerts": {
+        "reviewRequested": true,
+        "ciFailed": true,
+        "changesRequested": true,
+        "approved": true
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ enum DemoAlert {
     static func make() -> EventAlert {
         let event = CalendarEvent(
             id: "demo",
-            title: ProcessInfo.processInfo.environment["LUME_DEMO_TITLE"] ?? "Daily MEF",
+            title: ProcessInfo.processInfo.environment["LUME_DEMO_TITLE"] ?? "Daily standup",
             start: Date().addingTimeInterval(5 * 60),
             end: Date().addingTimeInterval(20 * 60),
             isAllDay: false,
@@ -20,7 +20,7 @@ enum DemoMeeting {
         let now = Date()
         let event = CalendarEvent(
             id: "demo-meeting",
-            title: "Daily MEF",
+            title: "Daily standup",
             start: now.addingTimeInterval(-10 * 60),
             end: now.addingTimeInterval(ending ? 4 * 60 : 12 * 60),
             isAllDay: false,
