@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @MainActor
@@ -7,6 +8,7 @@ final class NotchModel: ObservableObject {
     @Published private(set) var pages: [NotchPage] = []
     @Published private(set) var pageIndex = 0
     @Published private(set) var alert: EventAlert?
+    var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
     var openSettings: () -> Void = {}
@@ -90,6 +92,13 @@ final class NotchModel: ObservableObject {
         showNextAlert()
     }
 
+    func fitAlert(contentHeight: CGFloat) {
+        guard alert != nil, contentHeight > 0 else { return }
+        let base = alertSize
+        let height = max(base.height, contentTopInset + contentHeight.rounded(.up))
+        resize(toFit: CGSize(width: base.width, height: height))
+    }
+
     func dismissAlert() {
         alertTask?.cancel()
         alertTask = nil
@@ -106,8 +115,27 @@ final class NotchModel: ObservableObject {
         let next = alertQueue.removeFirst()
         withAnimation(NotchMotion.resize) { alert = next }
         resize(toFit: alertSize)
+        announce()
         if !isHovering {
             scheduleAlertDismiss(after: AlertLayout.duration)
+        }
+    }
+
+    private func announce() {
+        let feedback = alertFeedback
+        if !feedback.sound.isEmpty {
+            NSSound(named: feedback.sound)?.play()
+        }
+        guard feedback.shake else { return }
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(AlertShake.delay))
+            for _ in 0..<AlertShake.bounces {
+                guard let self, self.alert != nil else { return }
+                withAnimation(.easeOut(duration: AlertShake.downDuration)) { self.size.height += AlertShake.depth }
+                try? await Task.sleep(for: .seconds(AlertShake.downDuration))
+                withAnimation(AlertShake.settle) { self.size.height -= AlertShake.depth }
+                try? await Task.sleep(for: .seconds(AlertShake.pause))
+            }
         }
     }
 

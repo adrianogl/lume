@@ -19,6 +19,9 @@ enum SettingsText {
     static let noCalendars = "Nenhum calendário encontrado. Confira o acesso em Ajustes do Sistema › Privacidade e Segurança › Calendários."
     static let alertsSection = "Avisos"
     static let alertAtStart = "Na hora que começa"
+    static let alertShake = "Pulinho do notch"
+    static let alertSound = "Som"
+    static let noSound = "Sem som"
     static let alertsFooter = "O notch mostra uma pílula com o evento. Eventos de dia todo não avisam."
     static let displaySection = "Exibição"
 

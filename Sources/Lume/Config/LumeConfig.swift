@@ -59,6 +59,8 @@ struct WeekModuleConfig: Codable, Equatable {
 struct EventAlertsConfig: Codable, Equatable {
     var minutesBefore = [5]
     var atStart = true
+    var shake = true
+    var sound = AlertSound.defaultName
 
     init() {}
 
@@ -66,6 +68,8 @@ struct EventAlertsConfig: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         minutesBefore = try container.decodeIfPresent([Int].self, forKey: .minutesBefore) ?? [5]
         atStart = try container.decodeIfPresent(Bool.self, forKey: .atStart) ?? true
+        shake = try container.decodeIfPresent(Bool.self, forKey: .shake) ?? true
+        sound = try container.decodeIfPresent(String.self, forKey: .sound) ?? AlertSound.defaultName
     }
 }
 

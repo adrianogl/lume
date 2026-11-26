@@ -36,7 +36,7 @@ struct NotchView: View {
                             .transition(.scale(scale: OpenLayout.mascotAppearScale, anchor: .topLeading).combined(with: .opacity))
                     }
                 } else if let alert = model.alert {
-                    AlertPillView(alert: alert, isBlinking: isBlinking, dismiss: model.dismissAlert)
+                    AlertPillView(alert: alert, isBlinking: isBlinking, dismiss: model.dismissAlert, onContentHeight: model.fitAlert)
                         .padding(.top, model.contentTopInset)
                         .frame(width: model.size.width, height: model.size.height)
                         .transition(.opacity.animation(OpenLayout.contentFade))

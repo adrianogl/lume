@@ -85,6 +85,7 @@ enum AlertLayout {
     static let size = CGSize(width: 400, height: 60)
     static let textRefresh: TimeInterval = 15
     static let belowCameraHeight: CGFloat = 48
+    static let verticalPadding: CGFloat = 11
     static let duration: Double = 8
     static let leaveDelay: Double = 2
     static let queueGap: Double = 0.6
@@ -98,6 +99,20 @@ enum AlertLayout {
     static let buttonHeight: CGFloat = 22
     static let buttonFontSize: CGFloat = 11
     static let selectableMinutes = [1, 5, 10, 15, 30]
+}
+
+enum AlertSound {
+    static let defaultName = "Glass"
+    static let choices = ["Glass", "Ping", "Pop", "Purr", "Tink", "Hero"]
+}
+
+enum AlertShake {
+    static let delay: Double = 0.45
+    static let bounces = 2
+    static let depth: CGFloat = 4
+    static let downDuration: Double = 0.12
+    static let pause: Double = 0.22
+    static let settle = Animation.spring(response: 0.28, dampingFraction: 0.55)
 }
 
 enum AlertText {

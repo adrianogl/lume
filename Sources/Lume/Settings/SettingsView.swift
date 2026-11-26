@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct SettingsView: View {
@@ -100,6 +101,16 @@ struct SettingsView: View {
                     Toggle(SettingsText.minutesBefore(minutes), isOn: alertMinutesBinding(minutes))
                 }
                 Toggle(SettingsText.alertAtStart, isOn: binding(\.modules.week.alerts.atStart))
+                Toggle(SettingsText.alertShake, isOn: binding(\.modules.week.alerts.shake))
+                Picker(SettingsText.alertSound, selection: binding(\.modules.week.alerts.sound)) {
+                    Text(SettingsText.noSound).tag("")
+                    ForEach(AlertSound.choices, id: \.self) { name in
+                        Text(name).tag(name)
+                    }
+                }
+                .onChange(of: config.config.modules.week.alerts.sound) { _, name in
+                    if !name.isEmpty { NSSound(named: name)?.play() }
+                }
             } header: {
                 Text(SettingsText.alertsSection)
             } footer: {

@@ -4,7 +4,7 @@ enum DemoAlert {
     static func make() -> EventAlert {
         let event = CalendarEvent(
             id: "demo",
-            title: "Daily MEF",
+            title: ProcessInfo.processInfo.environment["LUME_DEMO_TITLE"] ?? "Daily MEF",
             start: Date().addingTimeInterval(5 * 60),
             end: Date().addingTimeInterval(20 * 60),
             isAllDay: false,

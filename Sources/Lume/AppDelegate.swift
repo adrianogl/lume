@@ -35,6 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func apply(_ newConfig: LumeConfig) {
         week.apply(newConfig.modules.week)
         alerts.apply(newConfig.modules.week)
+        model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
 
@@ -52,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             contentTopInset: geometry.hasPhysicalNotch ? geometry.notchSize.height : 0
         )
         model.setPages(NotchPage.enabled(in: config.config))
+        model.alertFeedback = config.config.modules.week.alerts
         model.openSettings = { [weak self] in self?.settings.show(on: geometry.screen) }
         let frame = geometry.windowFrame
         let panel = NotchPanel(contentRect: frame)

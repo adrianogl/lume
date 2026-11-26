@@ -5,6 +5,7 @@ struct AlertPillView: View {
     let alert: EventAlert
     let isBlinking: Bool
     let dismiss: () -> Void
+    let onContentHeight: (CGFloat) -> Void
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: AlertLayout.textRefresh)) { timeline in
@@ -14,7 +15,7 @@ struct AlertPillView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(alert.event.title)
                         .font(.system(size: AlertLayout.titleSize, weight: .bold))
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(subtitle(now: timeline.date))
                         .font(.system(size: AlertLayout.subtitleSize))
                         .opacity(WeekLayout.secondaryOpacity)
@@ -32,8 +33,14 @@ struct AlertPillView: View {
                 }
             }
             .padding(.horizontal, AlertLayout.horizontalPadding)
+            .padding(.vertical, AlertLayout.verticalPadding)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(GeometryReader { proxy in
+                Color.clear.preference(key: AlertContentHeightKey.self, value: proxy.size.height)
+            })
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .onPreferenceChange(AlertContentHeightKey.self, perform: onContentHeight)
     }
 
     private func subtitle(now: Date) -> String {
@@ -51,6 +58,14 @@ struct AlertPillView: View {
             parts.append(provider)
         }
         return parts.joined(separator: " · ")
+    }
+}
+
+private struct AlertContentHeightKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }
 
