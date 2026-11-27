@@ -17,6 +17,13 @@ struct AlertPillView: View {
                         .frame(width: UsageLayout.alertIconSize, height: UsageLayout.alertIconSize)
                         .background(RoundedRectangle(cornerRadius: 8).fill(usage.color.opacity(0.18)))
                         .frame(width: AlertLayout.mascotWidth)
+                } else if case .command(let run) = alert {
+                    Image(systemName: run.outcome.symbol)
+                        .font(.system(size: CommandLayout.alertGlyphSize, weight: .bold))
+                        .foregroundStyle(run.outcome.color)
+                        .frame(width: CommandLayout.alertIconSize, height: CommandLayout.alertIconSize)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(run.outcome.color.opacity(0.18)))
+                        .frame(width: AlertLayout.mascotWidth)
                 } else if case .pullRequest(let pr) = alert {
                     Image(systemName: pr.state.alertSymbol)
                         .font(.system(size: PRLayout.alertGlyphSize, weight: .bold))
@@ -41,6 +48,14 @@ struct AlertPillView: View {
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 1.5)
                                 .background(RoundedRectangle(cornerRadius: 4).fill(claude.tagColor.opacity(0.16)))
+                        } else if case .command(let run) = alert {
+                            Text(run.outcome.tag)
+                                .font(.system(size: ClaudeLayout.tagSize, weight: .bold))
+                                .textCase(.uppercase)
+                                .foregroundStyle(run.outcome.color)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 1.5)
+                                .background(RoundedRectangle(cornerRadius: 4).fill(run.outcome.color.opacity(0.16)))
                         }
                     }
                     if let detailTitle, !detailTitle.isEmpty {
@@ -83,6 +98,7 @@ struct AlertPillView: View {
         case .claude(let claude): claude.title
         case .pullRequest(let pr): pr.state.alertTitle
         case .usage(let usage): UsageText.alertTitle(account: usage.account, threshold: usage.threshold, window: usage.window)
+        case .command(let run): run.title
         }
     }
 
@@ -92,6 +108,7 @@ struct AlertPillView: View {
         case .claude(let claude): claude.sessionTitle
         case .pullRequest(let pr): pr.pullRequest.title
         case .usage: nil
+        case .command: nil
         }
     }
 
@@ -101,6 +118,7 @@ struct AlertPillView: View {
         case .claude: ClaudeText.later
         case .pullRequest: PRText.later
         case .usage: UsageText.close
+        case .command: CommandText.close
         }
     }
 
@@ -116,6 +134,9 @@ struct AlertPillView: View {
             return (PRText.open, { PullRequestMonitor.open(pr.pullRequest) })
         case .usage:
             return nil
+        case .command(let run):
+            guard let bundle = run.bundleID else { return nil }
+            return (CommandText.open, { ClaudeCodeMonitor.open(bundleID: bundle, terminalSession: run.terminalSession) })
         }
     }
 
@@ -127,6 +148,8 @@ struct AlertPillView: View {
             return pr.subtitle
         case .usage(let usage):
             return UsageText.alertSubtitle(resetsAt: usage.resetsAt, now: now)
+        case .command(let run):
+            return run.subtitle
         case .event(let event):
             let calendar = Calendar.current
             var parts: [String]

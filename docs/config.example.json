@@ -48,6 +48,14 @@
         "changesRequested": true,
         "approved": true
       }
+    },
+    "commands": {
+      "enabled": true,
+      "minSeconds": 30,
+      "notify": "away",
+      "cancelled": false,
+      "showRunning": true,
+      "ignored": ["vim", "nvim", "vi", "nano", "less", "more", "man", "ssh", "top", "htop", "btop", "watch", "tail", "claude", "tmux", "fzf", "lazygit"]
     }
   }
 }

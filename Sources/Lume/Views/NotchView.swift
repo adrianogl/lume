@@ -8,6 +8,7 @@ struct NotchView: View {
     let claude: ClaudeCodeMonitor
     let pullRequests: PullRequestMonitor
     let usage: ClaudeUsageMonitor
+    let commands: CommandMonitor
     let canvasSize: CGSize
     let eyeCenterOffset: CGFloat
     @State private var isBlinking = false
@@ -18,7 +19,7 @@ struct NotchView: View {
         let flare = NotchCurve.flare(forHeight: model.size.height)
         let radius = NotchCurve.cornerRadius(forHeight: model.size.height)
         ZStack(alignment: .top) {
-            RimGradientView()
+            RimGradientView(colors: model.alert?.isFailure == true ? CommandLayout.failedRim : NotchRim.colors)
                 .frame(width: canvasSize.width, height: canvasSize.height)
                 .mask(alignment: .top) {
                     NotchShape(topRadius: flare, bottomRadius: radius)
@@ -42,7 +43,7 @@ struct NotchView: View {
 
             ZStack(alignment: .topLeading) {
                 if model.isOpen {
-                    OpenNotchContent(model: model, config: config, week: week, music: music, claude: claude, pullRequests: pullRequests, usage: usage)
+                    OpenNotchContent(model: model, config: config, week: week, music: music, claude: claude, pullRequests: pullRequests, usage: usage, commands: commands)
                         .transition(OpenLayout.contentTransition)
 
                     if model.currentPage == .clock {
@@ -62,6 +63,7 @@ struct NotchView: View {
                         isClaudeWaiting: model.isClaudeWaiting,
                         pullRequestCount: model.pullRequestCount,
                         usagePercent: model.usagePercent,
+                        runningCommand: model.runningCommand,
                         eyeSize: eyeSize,
                         eyeCenterOffset: eyeCenterOffset
                     )

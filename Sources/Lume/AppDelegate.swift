@@ -29,6 +29,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self?.model?.present(.usage(alert))
     }
     private var usageSubscription: AnyCancellable?
+    private lazy var commands = CommandMonitor { [weak self] run in
+        self?.model?.present(.command(run))
+    }
+    private var commandSubscription: AnyCancellable?
     private lazy var meetings = MeetingTracker(store: week) { [weak self] status in
         guard ProcessInfo.processInfo.environment[LaunchOptions.demoMeeting] == nil else { return }
         self?.model?.setMeeting(status)
@@ -39,6 +43,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         config.start()
+        if let executable = Bundle.main.executablePath {
+            CommandShellInstaller.refreshIfInstalled(executable: executable)
+        }
         showNotch()
         configSubscription = config.$config.sink { [weak self] newConfig in
             self?.apply(newConfig)
@@ -51,6 +58,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         usageSubscription = usage.$closedPercent.sink { [weak self] percent in
             self?.model?.setUsagePercent(percent)
+        }
+        commandSubscription = commands.$status.sink { [weak self] status in
+            self?.model?.setRunningCommand(status)
         }
         musicSubscription = music.$isActive.sink { [weak self] active in
             self?.model?.setMusicActive(active)
@@ -75,6 +85,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         claude.apply(newConfig.modules.claudeCode)
         pullRequests.apply(newConfig.modules.pullRequests)
         usage.apply(newConfig.modules.claudeUsage, accountNames: newConfig.modules.claudeCode.accountNames)
+        commands.apply(newConfig.modules.commands)
         model?.alertFeedback = newConfig.modules.week.alerts
         model?.setPages(NotchPage.enabled(in: newConfig))
     }
@@ -106,6 +117,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             claude: claude,
             pullRequests: pullRequests,
             usage: usage,
+            commands: commands,
             canvasSize: frame.size,
             eyeCenterOffset: eyeCenterOffset(for: geometry)
         )
@@ -121,6 +133,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         model.setClaudeWaiting(claude.pendingCount > 0)
         model.setPullRequestCount(pullRequests.attentionCount)
         model.setUsagePercent(usage.closedPercent)
+        model.setRunningCommand(commands.status)
 
         let hover = NotchHoverMonitor(model: model, panel: panel, screenFrame: geometry.screen.frame)
         hover.start()

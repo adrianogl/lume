@@ -2,11 +2,15 @@ import AppKit
 import SwiftUI
 
 struct RimGradientView: NSViewRepresentable {
+    var colors = NotchRim.colors
+
     func makeNSView(context: Context) -> RimGradientNSView {
         RimGradientNSView()
     }
 
-    func updateNSView(_ view: RimGradientNSView, context: Context) {}
+    func updateNSView(_ view: RimGradientNSView, context: Context) {
+        view.setColors(colors)
+    }
 }
 
 final class RimGradientNSView: NSView {
@@ -35,6 +39,15 @@ final class RimGradientNSView: NSView {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         gradient.frame = bounds
+        CATransaction.commit()
+    }
+
+    func setColors(_ colors: [Color]) {
+        let cgColors = colors.map { NSColor($0).cgColor }
+        guard (gradient.colors as? [CGColor]) != cgColors else { return }
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(NotchRim.colorChange)
+        gradient.colors = cgColors
         CATransaction.commit()
     }
 

@@ -13,6 +13,7 @@ final class NotchModel: ObservableObject {
     @Published private(set) var isClaudeWaiting = false
     @Published private(set) var pullRequestCount = 0
     @Published private(set) var usagePercent: Int?
+    @Published private(set) var runningCommand: RunningCommandStatus?
     var alertFeedback = EventAlertsConfig()
     let restingSize: CGSize
     let contentTopInset: CGFloat
@@ -77,8 +78,10 @@ final class NotchModel: ObservableObject {
     var baseSize: CGSize {
         let hasPullRequests = pullRequestCount > 0
         let hasUsage = usagePercent != nil
+        let hasRunning = runningCommand != nil
         let icons = (isMusicActive ? 1 : 0) + (isClaudeWaiting ? 1 : 0) + (hasPullRequests ? 1 : 0) + (hasUsage ? 1 : 0)
         let countExtra = (hasPullRequests ? PRLayout.countWidth : 0) + (hasUsage ? UsageLayout.percentWidth : 0)
+            + (hasRunning ? CommandLayout.runningWidth + ClosedLayout.iconGap : 0)
         let iconExtra = CGFloat(icons) * ClosedLayout.iconSlot + countExtra
         if contentTopInset > 0 {
             var extra = iconExtra
@@ -97,6 +100,7 @@ final class NotchModel: ObservableObject {
 
     private var closedIconsWidth: CGFloat {
         var widths: [CGFloat] = []
+        if runningCommand != nil { widths.append(CommandLayout.runningWidth) }
         if isMusicActive { widths.append(BarsLayerNSView.width) }
         if isClaudeWaiting { widths.append(ClaudeLayout.markSize) }
         if pullRequestCount > 0 { widths.append(PRLayout.symbolSize + 2 + PRLayout.countWidth) }
@@ -124,6 +128,14 @@ final class NotchModel: ObservableObject {
     func setUsagePercent(_ percent: Int?) {
         guard percent != usagePercent else { return }
         withAnimation(NotchMotion.resize) { usagePercent = percent }
+        if !isOpen, alert == nil {
+            rest()
+        }
+    }
+
+    func setRunningCommand(_ status: RunningCommandStatus?) {
+        guard status != runningCommand else { return }
+        withAnimation(NotchMotion.resize) { runningCommand = status }
         if !isOpen, alert == nil {
             rest()
         }

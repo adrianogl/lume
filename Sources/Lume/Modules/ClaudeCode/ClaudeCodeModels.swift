@@ -74,6 +74,7 @@ enum NotchAlert: Identifiable, Equatable {
     case claude(ClaudeAlert)
     case pullRequest(PRAlert)
     case usage(UsageAlert)
+    case command(CommandRun)
 
     var id: String {
         switch self {
@@ -81,6 +82,12 @@ enum NotchAlert: Identifiable, Equatable {
         case .claude(let alert): alert.id.uuidString
         case .pullRequest(let alert): alert.id.uuidString
         case .usage(let alert): alert.id.uuidString
+        case .command(let run): run.id.uuidString
         }
+    }
+
+    var isFailure: Bool {
+        if case .command(let run) = self { return run.outcome.isFailure }
+        return false
     }
 }

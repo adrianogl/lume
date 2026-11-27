@@ -60,6 +60,28 @@ enum SettingsText {
         "Conectado como \(login)"
     }
 
+    static let commandsEnabled = "Avisar de comandos demorados"
+    static let commandsFooter = "Um hook no zsh avisa o Lume quando um comando demorado termina. O Lume guarda só o texto do comando, a pasta, a duração e o exit code. A saída do comando não é lida."
+    static let commandsShellSection = "Terminal"
+    static let commandsShellLabel = "Hook no ~/.zshrc"
+    static let commandsInstall = "Instalar"
+    static let commandsShellFooter = "Instalar cria ~/.config/lume/lume.zsh e adiciona uma linha que carrega esse arquivo no fim do ~/.zshrc. Uma cópia do ~/.zshrc original fica ao lado, com a extensão .lume-backup. Vale para os terminais abertos depois."
+    static let commandsWhenSection = "Avisar"
+    static let commandsMinimum = "Comandos com mais de"
+    static let commandsNotify = "Mostrar a pílula"
+    static let commandsNotifyAway = "Quando o terminal não está na frente"
+    static let commandsNotifyAlways = "Sempre"
+    static let commandsNotifyFailures = "Só quando falhar"
+    static let commandsCancelled = "Avisar também quando cancelar com Ctrl-C"
+    static let commandsRunning = "Mostrar o tempo no notch fechado enquanto roda"
+    static let commandsIgnoredSection = "Ignorar"
+    static let commandsIgnoredLabel = "Comandos"
+    static let commandsIgnoredFooter = "Separe por vírgula. Vale o nome do programa, sem os argumentos. São comandos que ficam abertos de propósito."
+
+    static func seconds(_ value: Int) -> String {
+        value < 60 ? "\(value) s" : "\(value / 60) min"
+    }
+
     static let sourceSection = "Fonte"
     static let sourceLabel = "De onde vêm os eventos"
     static let sourceEventKit = "Calendário do macOS"

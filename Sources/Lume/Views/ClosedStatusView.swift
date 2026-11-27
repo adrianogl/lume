@@ -6,6 +6,7 @@ struct ClosedStatusView: View {
     let isClaudeWaiting: Bool
     let pullRequestCount: Int
     let usagePercent: Int?
+    let runningCommand: RunningCommandStatus?
     let eyeSize: CGSize
     let eyeCenterOffset: CGFloat
 
@@ -59,6 +60,9 @@ struct ClosedStatusView: View {
     @ViewBuilder
     private var icons: some View {
         HStack(spacing: ClosedLayout.iconGap) {
+            if let runningCommand {
+                RunningCommandBadge(status: runningCommand)
+            }
             if isMusicPlaying {
                 BarsLayerView()
                     .frame(width: BarsLayerNSView.width, height: MusicLayout.barMaxHeight)

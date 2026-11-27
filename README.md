@@ -26,6 +26,7 @@ Every module can be turned on and off on its own, from the Settings window (gear
 | **Claude Code** | A pill when a session asks for permission, waits for your answer or finishes, with the session title. **Open** brings the right iTerm tab forward. A card keeps the recent alerts so nothing gets lost. Works with several accounts (`~/.claude`, `~/.claude-work`, …). |
 | **Claude usage** | How much of the 5-hour and weekly limits each account has used and when each window resets. The closed notch shows the percentage once an account crosses 80%, and a pill warns at the thresholds you choose. |
 | **Pull requests** | Your open PRs and the reviews requested from you, in one list ordered by what needs you: failing CI, ready to merge, changes requested, review requested. Alerts when that state changes. |
+| **Commands** | A pill when a long terminal command finishes (30 seconds or more by default), saying whether it passed or failed and how long it took. **Open** brings the right iTerm tab forward. While it runs, the closed notch shows the elapsed time. Needs zsh. |
 
 <p align="center">
   <img src="docs/images/music.png" alt="Music card with artwork, progress bar and controls" width="460"><br><br>
@@ -79,13 +80,17 @@ Both Claude modules are set up per account in Settings, and both keep a `setting
 
 The module uses the [GitHub CLI](https://cli.github.com) you already have logged in (`gh auth login`). Lume stores no token. It asks GitHub every 2 minutes (configurable) for your open PRs and the reviews requested from you. Drafts and bot PRs (Dependabot, Renovate) are hidden by default, and you can limit the list to some organizations or repositories.
 
+## Commands
+
+**Install** in Settings writes `~/.config/lume/lume.zsh` and adds one line that loads it at the end of your `~/.zshrc`, keeping a `.zshrc.lume-backup` copy the first time. The script uses zsh's `preexec` and `precmd` hooks and calls Lume in the background, so it doesn't slow down the prompt or change the exit code. Lume only receives the command text, the folder, the duration and the exit code; it never reads the command's output. Interactive commands such as `vim`, `ssh`, `less` and `claude` are ignored, and the list is editable. **Remove** takes the line out and deletes the script. Terminals opened before installing need a new tab.
+
 ## Configuration
 
 Settings live in `~/.config/lume/config.json`. The Settings window writes it, and Lume picks up edits you make by hand right away. Every key is optional. See [`docs/config.example.json`](docs/config.example.json) for all of them with their defaults.
 
 ## Privacy
 
-Everything stays on your Mac. Lume only goes to the network to download your iCal link (if you set one) and through `gh` for pull requests. It has no analytics and no telemetry.
+Everything stays on your Mac. Lume only goes to the network to download your iCal link (if you set one) and through `gh` for pull requests. The commands hook only sends data to Lume itself, on your Mac. It has no analytics and no telemetry.
 
 ## Releasing
 

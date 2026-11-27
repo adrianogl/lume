@@ -35,6 +35,7 @@ struct SettingsView: View {
                 case .claudeCode: ClaudeCodeSettingsView(config: config)
                 case .claudeUsage: ClaudeUsageSettingsView(config: config)
                 case .pullRequests: PullRequestSettingsView(config: config, monitor: pullRequests)
+                case .commands: CommandSettingsView(config: config)
                 }
                 if let error = config.loadError {
                     Section {
