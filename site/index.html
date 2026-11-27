@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lume · uma coruja no notch do Mac</title>
-<meta name="description" content="O Lume transforma o notch do Mac num lugar vivo: hora, semana, música, avisos do Claude Code e pull requests. Código aberto, para macOS 14 ou mais novo.">
+<meta name="description" content="O Lume transforma o notch do Mac num lugar vivo: hora, semana, música, avisos do Claude Code, pull requests e comandos do terminal. Código aberto, para macOS 14 ou mais novo.">
 <meta name="theme-color" content="#03040a">
 <meta property="og:title" content="Lume · uma coruja no notch do Mac">
-<meta property="og:description" content="Hora, semana, música, Claude Code e pull requests no topo da tela. Código aberto.">
+<meta property="og:description" content="Hora, semana, música, Claude Code, pull requests e comandos no topo da tela. Código aberto.">
 <meta property="og:type" content="website">
 <link rel="alternate" hreflang="pt-BR" href="https://adrianogl.github.io/lume/">
 <link rel="alternate" hreflang="en" href="https://adrianogl.github.io/lume/en/">
@@ -40,7 +40,7 @@
   <section class="hero wrap">
     <p class="kick badge">Código aberto · macOS 14 ou mais novo</p>
     <h1 class="disp">Uma coruja no<br>topo da sua tela.</h1>
-    <p class="lead">O Lume transforma o notch do Mac num lugar vivo. Em repouso, são só dois olhos. Passe o mouse e ele mostra a hora, a semana, a música, o Claude Code e as suas pull requests.</p>
+    <p class="lead">O Lume transforma o notch do Mac num lugar vivo. Em repouso, são só dois olhos. Passe o mouse e ele mostra a hora, a semana, a música, o Claude Code, as suas pull requests e os comandos demorados do terminal.</p>
     <div class="actions">
       <a class="btn main" href="https://github.com/adrianogl/lume/releases/download/v0.1.0/Lume-0.1.0.zip"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg>Baixar para macOS</a>
       <a class="btn ghost" href="https://github.com/adrianogl/lume">Ver o código</a>
@@ -118,7 +118,15 @@
               <div class="row pr"><div class="top"><span class="tag ok">Pronta para merge</span><b>Corrige fuso no calendário</b><span class="ago">há 1 h</span></div><span>#479 · fix/tz → main · 2 aprovações</span></div>
             </div>
           </div>
-          <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="card" data-card="commands">
+            <div class="hd">Comandos<span class="side"><i class="spin"></i>1 rodando</span></div>
+            <div class="body cmds">
+              <div class="cmd"><span class="tag run">rodando</span><code>swift build -c release</code><span class="detail">lume · 1 min 12 s</span><span class="chipbtn">Abrir</span></div>
+              <div class="cmd"><span class="tag">exit 1</span><code>npm test</code><span class="detail">site · 2 min 40 s</span><span class="ago">4 min</span><span class="chipbtn">Abrir</span></div>
+              <div class="cmd dim"><span class="tag ok">ok</span><code>./scripts/release.sh</code><span class="detail">lume · 48 s</span><span class="ago">38 min</span><span class="chipbtn soft">Abrir</span></div>
+            </div>
+          </div>
+          <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
         </div>
       </div>
       <p class="caption" data-caption aria-live="polite"></p>
@@ -129,6 +137,7 @@
         <button class="chip" type="button" data-page="claude" data-caption="As sessões que pediram algo, com o atalho para a aba certa.">Claude Code</button>
         <button class="chip" type="button" data-page="usage" data-caption="Os limites de cada conta, direto da status line.">Uso do Claude</button>
         <button class="chip" type="button" data-page="prs" data-caption="O que precisa de você primeiro.">Pull requests</button>
+        <button class="chip" type="button" data-page="commands" data-caption="Quando um comando demorado termina: se passou ou falhou e quanto levou.">Comandos</button>
       </div>
     </div>
   </section>
@@ -155,6 +164,7 @@
       <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5 6.5 8 3 11.5M8.5 12h4.5"/></svg></div><h3>Claude Code</h3><p>Aviso quando uma sessão pede permissão, espera você ou termina. Abrir leva à aba certa do iTerm.</p></div>
       <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M2.5 11.5a5.5 5.5 0 1 1 11 0"/><path d="M8 11.5 10.8 7"/></svg></div><h3>Uso do Claude</h3><p>Quanto cada conta já usou das 5 horas e da semana, e quando cada janela zera.</p></div>
       <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="3.5" r="1.6"/><circle cx="4" cy="12.5" r="1.6"/><circle cx="12" cy="12.5" r="1.6"/><path d="M4 5.1v5.8M12 10.9V7a2.5 2.5 0 0 0-2.5-2.5H7"/></svg></div><h3>Pull requests</h3><p>Suas PRs e os reviews pedidos a você, na ordem do que precisa de você.</p></div>
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="2"/><path d="M4.5 6.5 6.5 8l-2 1.5M8.5 10h3"/></svg></div><h3>Comandos</h3><p>Uma pílula quando um comando demorado do terminal termina, com o resultado e quanto levou. Enquanto roda, o notch fechado mostra o tempo.</p></div>
     </div>
   </section>
 
