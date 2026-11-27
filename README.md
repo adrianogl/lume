@@ -1,6 +1,6 @@
 # Lume
 
-[Português](README.pt-BR.md)
+[Português](README.pt-BR.md) · [Website](https://adrianogl.github.io/lume/en/)
 
 Lume turns the top of your Mac's screen into a small, living notch. At rest it is just a pair of owl eyes with a thin warm rim. Hover it and it opens into cards: the time, your week, what's playing, your Claude Code sessions, your Claude usage and your pull requests. When something needs you, a pill drops down with what happened and a button to act on it.
 

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lume · an owl in your Mac's notch</title>
+<meta name="description" content="Lume turns your Mac's notch into a living place: time, week, music, Claude Code alerts and pull requests. Open source, for macOS 14 or later.">
+<meta name="theme-color" content="#03040a">
+<meta property="og:title" content="Lume · an owl in your Mac's notch">
+<meta property="og:description" content="Time, week, music, Claude Code and pull requests at the top of your screen. Open source.">
+<meta property="og:type" content="website">
+<link rel="alternate" hreflang="pt-BR" href="https://adrianogl.github.io/lume/">
+<link rel="alternate" hreflang="en" href="https://adrianogl.github.io/lume/en/">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark"></span>Lume</a>
+    <nav class="nav-links">
+      <a href="#modules">Modules</a>
+      <a href="#claude-code">Claude Code</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#download">Download</a>
+    </nav>
+    <div class="nav-end">
+      <a class="lang" href="../" hreflang="pt-BR">Português</a>
+      <a class="gh" href="https://github.com/adrianogl/lume"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.71 1.23 1.87.87 2.33.67.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.96 0-.87.31-1.59.83-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.52.56.83 1.28.83 2.15 0 3.08-1.87 3.76-3.66 3.96.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg><span>adrianogl/lume</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <p class="kick badge">Open source · macOS 14 or later</p>
+    <h1 class="disp">An owl at the<br>top of your screen.</h1>
+    <p class="lead">Lume turns your Mac's notch into a living place. At rest it is just a pair of eyes. Hover it and it shows the time, your week, your music, Claude Code and your pull requests.</p>
+    <div class="actions">
+      <a class="btn main" href="https://github.com/adrianogl/lume/releases/download/v0.1.0/Lume-0.1.0.zip"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg>Download for macOS</a>
+      <a class="btn ghost" href="https://github.com/adrianogl/lume">View the source</a>
+    </div>
+    <p class="meta">Version 0.1.0 · 2.3 MB · MIT license</p>
+
+    <div class="screen" data-screen>
+      <div class="menubar" aria-hidden="true"><b>Finder</b><span>File</span><span>Edit</span><span>View</span><div class="end"><span data-date-short></span><span data-time></span></div></div>
+      <div class="hold" aria-hidden="true">
+        <div class="nt"><div class="in"></div>
+          <div class="card" data-card="clock">
+            <div class="hd">Lume<span class="side" data-date-short></span></div>
+            <div class="body clock">
+              <img src="../assets/owl.svg" alt="">
+              <div><div class="time" data-time>18:42</div><div class="date" data-date-long>Thursday, November 26</div></div>
+            </div>
+          </div>
+          <div class="card" data-card="week">
+            <div class="hd">Week<span class="side">this week</span></div>
+            <div class="body">
+              <div class="days" data-week>
+                <div>Mon<b>23</b><s>•</s></div>
+                <div>Tue<b>24</b><s>••</s></div>
+                <div>Wed<b>25</b><s></s></div>
+                <div class="today">Thu<b>26</b><s>•••</s></div>
+                <div>Fri<b>27</b><s>•</s></div>
+                <div>Sat<b>28</b><s></s></div>
+                <div>Sun<b>29</b><s></s></div>
+              </div>
+              <div class="event"><div><b>Daily standup</b><span>in 18 min · 7:00 – 7:15 PM</span></div></div>
+            </div>
+          </div>
+          <div class="card" data-card="music">
+            <div class="body music">
+              <div class="art"></div>
+              <div class="info">
+                <div class="title">Track name</div>
+                <div class="who">Artist · Spotify</div>
+                <div class="track"><div class="fill" style="width:42%"></div></div>
+                <div class="times"><span>1:32</span><span>3:38</span></div>
+                <div class="controls">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="#fff"><path d="M3 3h2v10H3zM14 3v10L6 8z"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="#fff"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="#fff"><path d="M11 3h2v10h-2zM2 3v10l8-5z"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card" data-card="claude">
+            <div class="hd">Claude Code<span class="side">2 alerts</span></div>
+            <div class="body">
+              <div class="row"><span class="led"></span><div class="grow"><b>Asked permission to run a command</b><span>app · refactor the monitor · now</span></div><span class="chipbtn">Open</span></div>
+              <div class="row"><span class="led done"></span><div class="grow"><b>Finished</b><span>site · tweak the hero · 4 min ago</span></div><span class="chipbtn soft">Open</span></div>
+            </div>
+          </div>
+          <div class="card" data-card="usage">
+            <div class="hd">Claude usage<span class="side">1 min ago</span></div>
+            <div class="body">
+              <div class="account">Personal</div>
+              <div class="bars">
+                <div class="bar"><div class="lbl"><span>5 hours · resets 9:00 PM</span><b>40%</b></div><div class="track"><div class="fill" style="width:40%"></div></div></div>
+                <div class="bar"><div class="lbl"><span>Week · resets Tue</span><b>82%</b></div><div class="track"><div class="fill hot" style="width:82%"></div></div></div>
+              </div>
+              <div class="account">Work</div>
+              <div class="bars">
+                <div class="bar"><div class="lbl"><span>5 hours · resets 7:40 PM</span><b>16%</b></div><div class="track"><div class="fill" style="width:16%"></div></div></div>
+                <div class="bar"><div class="lbl"><span>Week · resets Wed</span><b>5%</b></div><div class="track"><div class="fill" style="width:5%"></div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card" data-card="prs">
+            <div class="hd">Pull requests<span class="side">2 need you</span></div>
+            <div class="body">
+              <div class="row pr"><div class="top"><span class="tag">CI failed</span><b>Add cache to the feed</b><span class="ago">12 min ago</span></div><span>#482 · feat/cache → main · +184 −22</span></div>
+              <div class="row pr"><div class="top"><span class="tag ok">Ready to merge</span><b>Fix calendar time zone</b><span class="ago">1 h ago</span></div><span>#479 · fix/tz → main · 2 approvals</span></div>
+            </div>
+          </div>
+          <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+      <p class="caption" data-caption aria-live="polite"></p>
+      <div class="chips">
+        <button class="chip" type="button" data-page="clock" data-caption="Hover and it opens. Move away and it goes back to sleep.">Clock</button>
+        <button class="chip" type="button" data-page="week" data-caption="This week's events and what's next.">Week</button>
+        <button class="chip" type="button" data-page="music" data-caption="Spotify or Apple Music, with artwork and controls.">Music</button>
+        <button class="chip" type="button" data-page="claude" data-caption="Sessions that asked for something, one click from the right tab.">Claude Code</button>
+        <button class="chip" type="button" data-page="usage" data-caption="Each account's limits, straight from the status line.">Claude usage</button>
+        <button class="chip" type="button" data-page="prs" data-caption="What needs you comes first.">Pull requests</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <p class="kick">Closed</p>
+    <h2 class="disp h2">Quiet until it needs you.</h2>
+    <p class="lead">With the notch closed, the owl just watches. When something happens it changes a little: small bars while music plays, the time left in a meeting, a pill when Claude Code is waiting for you.</p>
+    <div class="strip">
+      <div class="tile"><div class="stage" aria-hidden="true"><div class="hold"><div class="closed" style="width:150px"><span class="eye"></span><span class="eye"></span></div></div></div><div class="text"><h3>At rest</h3><p>Two eyes and a thin warm rim. Nothing else.</p></div></div>
+      <div class="tile"><div class="stage" aria-hidden="true"><div class="hold"><div class="closed" style="width:150px"><span class="eye"></span><span class="eye"></span><span class="eq"><i></i><i></i><i></i></span></div></div></div><div class="text"><h3>Playing music</h3><p>The owl listens along and small bars dance on the notch.</p></div></div>
+      <div class="tile"><div class="stage" aria-hidden="true"><div class="hold"><div class="closed meeting" style="width:172px"><span class="left">4 min</span><span><span class="eye"></span> <span class="eye" style="margin-left:10px"></span></span><span class="right">19:30</span></div></div></div><div class="text"><h3>In a meeting</h3><p>How much time is left and what comes next.</p></div></div>
+      <div class="tile"><div class="stage" aria-hidden="true"><div class="hold small"><div class="nt mini-alert"><div class="in"></div><div class="txt"><b>Meeting in 5 min</b><span>Daily standup</span></div><div class="acts"><span class="chipbtn">Join</span></div></div></div></div><div class="text"><h3>An alert</h3><p>A pill drops down with what happened and a button to act on it.</p></div></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="modules">
+    <p class="kick">Modules</p>
+    <h2 class="disp h2">Turn each card on or off.</h2>
+    <div class="grid">
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.2 1.4"/></svg></div><h3>Clock</h3><p>Time and date, with the owl watching your cursor.</p></div>
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg></div><h3>Week</h3><p>Your events from Calendar or an iCal link, an alert before they start and the time left while they run.</p></div>
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M6 12.5V3.5l7-1.5v9"/><circle cx="4.2" cy="12.5" r="1.8"/><circle cx="11.2" cy="11" r="1.8"/></svg></div><h3>Music</h3><p>Track, artwork, progress and controls for Spotify and Apple Music.</p></div>
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5 6.5 8 3 11.5M8.5 12h4.5"/></svg></div><h3>Claude Code</h3><p>An alert when a session asks for permission, waits for you or finishes. Open jumps to the right iTerm tab.</p></div>
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M2.5 11.5a5.5 5.5 0 1 1 11 0"/><path d="M8 11.5 10.8 7"/></svg></div><h3>Claude usage</h3><p>How much of the 5-hour and weekly limits each account has used, and when each window resets.</p></div>
+      <div><div class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="3.5" r="1.6"/><circle cx="4" cy="12.5" r="1.6"/><circle cx="12" cy="12.5" r="1.6"/><path d="M4 5.1v5.8M12 10.9V7a2.5 2.5 0 0 0-2.5-2.5H7"/></svg></div><h3>Pull requests</h3><p>Your PRs and the reviews requested from you, ordered by what needs you.</p></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="claude-code">
+    <div class="split">
+      <div>
+        <p class="kick">For people who live in the terminal</p>
+        <h2 class="disp h2">Claude Code taps you. No need to keep watching.</h2>
+        <ul class="list">
+          <li><b>Several accounts.</b><code>~/.claude</code>, <code>~/.claude-work</code> and as many as you have.</li>
+          <li><b>The right tab.</b>Open brings forward the iTerm tab of the session that called.</li>
+          <li><b>Your status line, untouched.</b>Lume reads the usage and passes the input on to the command you already had.</li>
+          <li><b>With a backup.</b>Before touching <code>settings.json</code>, it keeps a copy. Remove takes out only what is Lume's.</li>
+        </ul>
+      </div>
+      <div class="panel" aria-hidden="true">
+        <div class="hold">
+          <div class="nt pill"><div class="in"></div>
+            <div class="alert-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#ffb36b" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5 6.5 8 3 11.5M8.5 12h4.5"/></svg></div>
+            <div class="alert-text"><b>Asks permission · Personal</b><span>app · refactor the PR monitor</span></div>
+            <div class="alert-act"><span class="chipbtn">Open</span></div>
+          </div>
+        </div>
+        <div class="terminal">
+          <div class="dim">~/Code/app</div>
+          <div><span style="color:#ffb36b">›</span> refactor the PR monitor</div>
+          <div class="ask">● Run swift build?</div>
+          <div class="dim">  1. Yes   2. Yes, always   3. No</div>
+          <div class="status">opus · app  │  5h 40%  │  wk 82%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="privacy">
+    <p class="kick">Privacy</p>
+    <h2 class="disp h2">Everything stays on your Mac.</h2>
+    <p class="lead">No account, no analytics, no telemetry. Lume only goes to the network to download your iCal link, if you set one, and to fetch pull requests through the <code>gh</code> you already have logged in.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">0</div><h3>accounts to create</h3><p>Open it and it works. Settings live in a JSON file in <code>~/.config/lume</code>.</p></div>
+      <div class="stat"><div class="n">0</div><h3>tokens stored</h3><p>GitHub goes through <code>gh</code>. Calendar, through the macOS permission.</p></div>
+      <div class="stat"><div class="n">2.3 MB</div><h3>download</h3><p>A native Swift app, with no hidden browser underneath.</p></div>
+    </div>
+  </section>
+
+  <section class="section wrap download" id="download">
+    <p class="kick">Download</p>
+    <h2 class="disp h2">Three steps and the owl wakes up.</h2>
+    <div class="steps">
+      <div class="step"><div class="k">1</div><h3>Download the zip</h3><p><code>Lume-0.1.0.zip</code>, from the GitHub releases page. The SHA-256 comes with it.</p></div>
+      <div class="step"><div class="k">2</div><h3>Move it to Applications</h3><p>Unzip and drag <code>Lume.app</code> over. It has no Dock icon: it lives in the notch.</p></div>
+      <div class="step"><div class="k">3</div><h3>Right-click to open</h3><p>The release is not notarized. Right-click › Open. If macOS still refuses: <code>xattr -dr com.apple.quarantine /Applications/Lume.app</code></p></div>
+    </div>
+    <div class="actions" style="margin-top:40px">
+      <a class="btn main" href="https://github.com/adrianogl/lume/releases/download/v0.1.0/Lume-0.1.0.zip">Download version 0.1.0</a>
+      <a class="btn ghost" href="https://github.com/adrianogl/lume#build-from-source">Build from source</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <div class="name"><span class="mark" style="--size:20px"></span>Lume</div>
+      MIT license. The notch design follows the visual direction of <a href="https://rama2555.github.io/nusa/">Nusa</a>.<br>
+      Claude is a trademark of Anthropic. Lume is an independent project, not affiliated with Anthropic.
+    </div>
+    <div class="links"><a href="https://github.com/adrianogl/lume">GitHub</a> · <a href="https://github.com/adrianogl/lume/releases">Releases</a> · <a href="../" hreflang="pt-BR">Português</a></div>
+  </div>
+</footer>
+
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Lume
 
-[English](README.md)
+[English](README.md) · [Site](https://adrianogl.github.io/lume/)
 
 O Lume transforma o topo da tela do Mac num notch pequeno e vivo. Em repouso, é só um par de olhos de coruja com uma borda fina e quente. Passe o mouse e ele abre em cards: a hora, a sua semana, o que está tocando, as sessões do Claude Code, o uso do Claude e as suas pull requests. Quando algo precisa de você, desce uma pílula dizendo o que aconteceu, com um botão para agir.
 
