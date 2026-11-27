@@ -8,6 +8,7 @@ struct OpenNotchContent: View {
     let claude: ClaudeCodeMonitor
     let pullRequests: PullRequestMonitor
     let usage: ClaudeUsageMonitor
+    let commands: CommandMonitor
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -25,6 +26,8 @@ struct OpenNotchContent: View {
                     ClaudeUsageCardView(monitor: usage)
                 case .pullRequests:
                     PullRequestCardView(monitor: pullRequests)
+                case .commands:
+                    CommandCardView(monitor: commands)
                 case nil:
                     Text(OpenLayout.noModules)
                         .font(.system(size: WeekLayout.rowSize))

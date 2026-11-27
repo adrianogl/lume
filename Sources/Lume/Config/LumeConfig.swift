@@ -18,6 +18,7 @@ struct ModulesConfig: Codable, Equatable {
     var claudeCode = ClaudeCodeModuleConfig()
     var pullRequests = PullRequestsModuleConfig()
     var claudeUsage = ClaudeUsageModuleConfig()
+    var commands = CommandsModuleConfig()
 
     init() {}
 
@@ -29,6 +30,7 @@ struct ModulesConfig: Codable, Equatable {
         claudeCode = try container.decodeIfPresent(ClaudeCodeModuleConfig.self, forKey: .claudeCode) ?? ClaudeCodeModuleConfig()
         pullRequests = try container.decodeIfPresent(PullRequestsModuleConfig.self, forKey: .pullRequests) ?? PullRequestsModuleConfig()
         claudeUsage = try container.decodeIfPresent(ClaudeUsageModuleConfig.self, forKey: .claudeUsage) ?? ClaudeUsageModuleConfig()
+        commands = try container.decodeIfPresent(CommandsModuleConfig.self, forKey: .commands) ?? CommandsModuleConfig()
     }
 }
 
@@ -226,5 +228,26 @@ struct ClaudeUsageModuleConfig: Codable, Equatable {
         enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
         showWhenClosed = try container.decodeIfPresent(Bool.self, forKey: .showWhenClosed) ?? true
         alertThresholds = try container.decodeIfPresent([Int].self, forKey: .alertThresholds) ?? [80, 95]
+    }
+}
+
+struct CommandsModuleConfig: Codable, Equatable {
+    var enabled = true
+    var minSeconds = 30
+    var notify = CommandNotifyMode.away
+    var cancelled = false
+    var showRunning = true
+    var ignored = CommandHook.defaultIgnored
+
+    init() {}
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        minSeconds = try container.decodeIfPresent(Int.self, forKey: .minSeconds) ?? 30
+        notify = try container.decodeIfPresent(CommandNotifyMode.self, forKey: .notify) ?? .away
+        cancelled = try container.decodeIfPresent(Bool.self, forKey: .cancelled) ?? false
+        showRunning = try container.decodeIfPresent(Bool.self, forKey: .showRunning) ?? true
+        ignored = try container.decodeIfPresent([String].self, forKey: .ignored) ?? CommandHook.defaultIgnored
     }
 }

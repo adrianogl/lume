@@ -264,6 +264,7 @@ enum NotchRim {
     static let magenta = Color(red: 214 / 255, green: 51 / 255, blue: 108 / 255)
     static let colors = [amber, coral, magenta, coral, amber]
     static let flowPeriod: Double = 6
+    static let colorChange: Double = 0.3
     static let fadeStart: CGFloat = 0.2
     static let fadeEnd: CGFloat = 0.85
 }

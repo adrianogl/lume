@@ -24,6 +24,7 @@ Cada módulo liga e desliga sozinho, pela janela de Ajustes (a engrenagem no not
 | **Claude Code** | Uma pílula quando uma sessão pede permissão, espera sua resposta ou termina, com o título da sessão. **Abrir** traz para a frente a aba certa do iTerm. Um card guarda os avisos recentes para nada se perder. Funciona com várias contas (`~/.claude`, `~/.claude-trabalho`, …). |
 | **Uso do Claude** | Quanto cada conta já usou dos limites de 5 horas e da semana e quando cada janela zera. O notch fechado mostra o percentual quando uma conta passa de 80%, e uma pílula avisa nos marcos que você escolher. |
 | **Pull requests** | As suas PRs abertas e os reviews pedidos a você, numa lista só, na ordem do que precisa de você: CI falhou, pronta para merge, mudanças pedidas, review pedido. Avisa quando esse estado muda. |
+| **Comandos** | Uma pílula quando um comando demorado do terminal termina (30 segundos ou mais, por padrão), dizendo se passou ou falhou e quanto levou. **Abrir** traz a aba certa do iTerm para a frente. Enquanto roda, o notch fechado mostra o tempo. Precisa do zsh. |
 
 <p align="center">
   <img src="docs/images/music.png" alt="Card de música com capa, barra de progresso e controles" width="460"><br><br>
@@ -77,13 +78,17 @@ Os dois módulos do Claude são configurados conta por conta nos Ajustes. Na pri
 
 O módulo usa o [GitHub CLI](https://cli.github.com) que você já tem logado (`gh auth login`). O Lume não guarda token. A cada 2 minutos (dá para mudar), ele busca no GitHub as suas PRs abertas e os reviews pedidos a você. Rascunhos e PRs de bot (Dependabot, Renovate) ficam de fora por padrão, e dá para limitar a lista a algumas organizações ou repositórios.
 
+## Comandos
+
+**Instalar**, nos Ajustes, cria `~/.config/lume/lume.zsh` e adiciona uma linha que carrega esse arquivo no fim do seu `~/.zshrc`, guardando uma cópia `.zshrc.lume-backup` na primeira vez. O script usa os hooks `preexec` e `precmd` do zsh e chama o Lume em segundo plano, então não atrasa o prompt nem muda o exit code. O Lume recebe só o texto do comando, a pasta, a duração e o exit code; a saída do comando nunca é lida. Comandos interativos como `vim`, `ssh`, `less` e `claude` são ignorados, e a lista é editável. **Remover** tira a linha e apaga o script. Terminais abertos antes da instalação precisam de uma aba nova.
+
 ## Configuração
 
 Os ajustes ficam em `~/.config/lume/config.json`. A janela de Ajustes grava esse arquivo, e o Lume percebe na hora o que você editar à mão. Todas as chaves são opcionais. O [`docs/config.example.json`](docs/config.example.json) tem todas, com os valores padrão.
 
 ## Privacidade
 
-Tudo fica no seu Mac. O Lume só acessa a rede para baixar o seu link iCal (se você configurar um) e, pelo `gh`, para as pull requests. Não tem analytics nem telemetria.
+Tudo fica no seu Mac. O Lume só acessa a rede para baixar o seu link iCal (se você configurar um) e, pelo `gh`, para as pull requests. O hook de comandos só manda dados para o próprio Lume, no seu Mac. Não tem analytics nem telemetria.
 
 ## Como gerar um release
 
